@@ -1,0 +1,1 @@
+ "../../../lib/libsfml-system.a" C:/msys64/ucrt64/lib/libopenal.dll.a C:/msys64/ucrt64/lib/libvorbisenc.dll.a C:/msys64/ucrt64/lib/libvorbisfile.dll.a C:/msys64/ucrt64/lib/libvorbis.dll.a C:/msys64/ucrt64/lib/libogg.dll.a C:/msys64/ucrt64/lib/libFLAC.dll.a -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 

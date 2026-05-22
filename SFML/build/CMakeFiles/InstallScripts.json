@@ -1,0 +1,14 @@
+{
+	"InstallScripts" : 
+	[
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/System/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/Main/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/Window/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/Network/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/Graphics/cmake_install.cmake",
+		"D:/UTN-Tecnicatura/2026/PR2/TPI/Descargas/SFML-2.5.1-sources/SFML-2.5.1/build/src/SFML/Audio/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
