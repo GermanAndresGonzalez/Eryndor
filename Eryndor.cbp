@@ -39,9 +39,28 @@
 			<Add library="sfml-system" />
 			<Add directory="SFML/build/lib" />
 		</Linker>
-		<Unit filename="MenuPrincipal.cpp" />
-		<Unit filename="MenuPrincipal.h" />
+		<Unit filename="botonera.cpp" />
+		<Unit filename="botonera.h" />
+		<Unit filename="escena_menu.cpp" />
+		<Unit filename="escena_menu.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="menu.cpp" />
+		<Unit filename="menu.h" />
+		<Unit filename="menu_principal.cpp" />
+		<Unit filename="menu_principal.h" />
+		<Unit filename="pantalla_Jugador.cpp" />
+		<Unit filename="pantalla_Jugador.h" />
+		<Unit filename="pantalla_acerca.cpp" />
+		<Unit filename="pantalla_acerca.h" />
+		<Unit filename="pantalla_jugar.cpp" />
+		<Unit filename="pantalla_jugar.h" />
+		<Unit filename="pantalla_opciones.cpp" />
+		<Unit filename="pantalla_opciones.h" />
+		<Unit filename="pantalla_resultado.h" />
+		<Unit filename="principal.cpp" />
+		<Unit filename="principal.h" />
+		<Unit filename="ventana_cueva.cpp" />
+		<Unit filename="ventana_cueva.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
