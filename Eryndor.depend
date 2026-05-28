@@ -534,7 +534,7 @@
 	<cstddef>
 	<string>
 
-1779994375 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.cpp
+1779998863 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.cpp
 	"escena_menu.h"
 	<iostream>
 
@@ -599,7 +599,7 @@
 	"pantalla_acerca.h"
 	<iostream>
 
-1779998109 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
+1779998472 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
 	"pantalla_jugar.h"
 	<algorithm>
 	<iostream>
@@ -619,16 +619,16 @@
 	"ventana_cueva.h"
 	<iostream>
 
-1779923885 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.h
+1779998732 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.h
 	<SFML/Graphics.hpp>
 	"pantalla_resultado.h"
 
-1779923885 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.cpp
+1779998732 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.cpp
 	"pantalla_Jugador.h"
 	<algorithm>
 	<iostream>
 
-1779994544 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.cpp
+1779998472 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.cpp
 	"personaje.h"
 	<cstring>
 
@@ -640,5 +640,5 @@
 1779994375 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\enemigos.h
 	<cstddef>
 
-1779923481 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.h
+1779998472 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.h
 

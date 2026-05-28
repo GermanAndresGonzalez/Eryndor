@@ -14,7 +14,7 @@ public:
     // Métodos principales
     int atacar();
     void recibirDanio(int danio);
-    void curar(int puntos);
+    bool curar(int puntos);
     void agregarOro(int cantidad);
     bool gastarOro(int cantidad);
 

@@ -46,11 +46,16 @@ void Personaje::recibirDanio(int danio)
     }
 }
 
-void Personaje::curar(int puntos)
+bool Personaje::curar(int puntos)
 {
     if (estaEliminado())
     {
-        return;
+        return false;
+    }
+
+    if (vidaActual >= vidaMaxima)
+    {
+        return false;
     }
 
     vidaActual += puntos;
@@ -58,6 +63,8 @@ void Personaje::curar(int puntos)
     {
         vidaActual = vidaMaxima;
     }
+
+    return true;
 }
 
 void Personaje::agregarOro(int cantidad)

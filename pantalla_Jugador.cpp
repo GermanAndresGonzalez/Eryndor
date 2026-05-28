@@ -40,6 +40,13 @@ PantallaJugador::PantallaJugador()
     titulo.setOutlineColor(sf::Color::Black);
     titulo.setOutlineThickness(2.f);
 
+    textoSalir.setFont(font);
+    textoSalir.setString("Presiona ESC para volver al menu principal");
+    textoSalir.setCharacterSize(22);
+    textoSalir.setFillColor(sf::Color::White);
+    textoSalir.setOutlineColor(sf::Color::Black);
+    textoSalir.setOutlineThickness(1.f);
+
     leyendaJugador1.setFont(font);
     leyendaJugador1.setString("Kael Draven");
     leyendaJugador1.setCharacterSize(24);
@@ -75,9 +82,13 @@ void PantallaJugador::ubicarElementos(const sf::Vector2u& windowSize)
     const float centroX = static_cast<float>(windowSize.x) / 2.f;
     const float fotosY = static_cast<float>(windowSize.y) / 2.f - 140.f;
     const float tituloY = 55.f;
+    const float textoSalirY = static_cast<float>(windowSize.y) - 45.f;
 
     titulo.setPosition(centroX, tituloY);
     centrarTexto(titulo);
+
+    textoSalir.setPosition(centroX, textoSalirY);
+    centrarTexto(textoSalir);
 
     auto prepararSprite = [&](sf::Sprite& sprite, sf::RectangleShape& marco, const sf::Texture& textura) -> sf::Vector2f
     {
@@ -168,6 +179,7 @@ void PantallaJugador::updateLayout(const sf::RenderWindow& window)
 void PantallaJugador::draw(sf::RenderWindow& window) const
 {
     window.draw(titulo);
+    window.draw(textoSalir);
     window.draw(spriteJugador1);
     window.draw(spriteJugador2);
     window.draw(marcoJugador1);

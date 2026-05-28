@@ -21,6 +21,7 @@ private:
 
     sf::Font font;
     sf::Text titulo;
+    sf::Text textoSalir;
     sf::Text leyendaJugador1;
     sf::Text leyendaJugador2;
     sf::Texture texturaJugador1;

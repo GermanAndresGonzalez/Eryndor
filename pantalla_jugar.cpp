@@ -423,7 +423,14 @@ void PantallaJugar::aplicarCuracionJugador()
     registrarMensaje("--- Turno " + std::to_string(turnoCombate) + " ---");
 
     const int curacion = 25 + numeroAleatorio(0, 10);
-    heroe->curar(curacion);
+    if (!heroe->curar(curacion))
+    {
+        registrarMensaje(std::string(heroe->getNombre()) + " ya tiene la vida al maximo.");
+        turnoCombate--;
+        actualizarTextosCombate();
+        return;
+    }
+
     pocionesRestantes--;
     registrarMensaje(std::string(heroe->getNombre()) + " se cura " + std::to_string(curacion) + " puntos de vida.");
 

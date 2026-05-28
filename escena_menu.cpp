@@ -30,6 +30,7 @@ void EscenaMenu::entrarAJuego()
 void EscenaMenu::entrarASeleccionJugador()
 {
   pantallaJugador.limpiarSeleccion();
+  sound.setVolume(0.f);
   pantallaActual = Pantalla::Jugador;
 }
 
