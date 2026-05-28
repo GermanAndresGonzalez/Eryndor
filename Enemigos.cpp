@@ -12,6 +12,7 @@ using namespace std;
    _idEnemigo = 0;
    _oroOtorgado = 0;
    _expOtorgada = 0;
+   _eliminado = false;
    for(int i = 0; i < 50; i++) {
             _nombre[i] = '\0';
         }
@@ -22,7 +23,7 @@ using namespace std;
 
    }
 
-    Enemigos::Enemigos(int vidaActual, int vidaMaxima, int defensa, int ataque, int idEnemigo, int oroOtorgado, int expOtorgada, char nombre [50], char descripcion[150]){
+    Enemigos::Enemigos(int vidaActual, int vidaMaxima, int defensa, int ataque, int idEnemigo, int oroOtorgado, int expOtorgada, const char* nombre, const char* descripcion){
    _vidaActual = vidaActual;
    _vidaMaxima = vidaMaxima;
    _defensa = defensa;
@@ -30,6 +31,7 @@ using namespace std;
    _idEnemigo = idEnemigo;
    _oroOtorgado = oroOtorgado;
    _expOtorgada = expOtorgada;
+   _eliminado = (_vidaActual <= 0);
     std::strncpy(_nombre, nombre, sizeof(_nombre) - 1);
     _nombre[sizeof(_nombre) - 1] = '\0';
     std::strncpy(_descripcion, descripcion, sizeof(_descripcion) - 1);
@@ -73,10 +75,39 @@ using namespace std;
     return _descripcion;
    }
 
+    int Enemigos::atacar(){
+    return _ataque + (_idEnemigo * 2);
+    }
+
+    void Enemigos::recibirDanio(int danio){
+    if (_eliminado) {
+        return;
+    }
+
+    int danioReal = danio - _defensa;
+    if (danioReal < 0) {
+        danioReal = 0;
+    }
+
+    _vidaActual -= danioReal;
+    if (_vidaActual < 0) {
+        _vidaActual = 0;
+    }
+
+    if (_vidaActual == 0) {
+        _eliminado = true;
+    }
+    }
+
+    bool Enemigos::estaEliminado() const{
+    return _eliminado;
+    }
+
 
 
     void Enemigos::setvidaActual(int vidaActual){
     _vidaActual = vidaActual;
+    _eliminado = (_vidaActual <= 0);
 }
 
     void Enemigos::setvidaMaxima(int vidaMaxima){
@@ -103,12 +134,12 @@ using namespace std;
     _expOtorgada = expOtorgada;
     }
 
-    void Enemigos::setnombre(char nombre[]){
+    void Enemigos::setnombre(const char* nombre){
     std::strncpy(_nombre, nombre, sizeof(_nombre) - 1);
     _nombre[sizeof(_nombre) - 1] = '\0';
     }
 
-    void Enemigos::setdescripcion(char descripcion[]){
+    void Enemigos::setdescripcion(const char* descripcion){
     std::strncpy(_descripcion, descripcion, sizeof(_descripcion) - 1);
     _descripcion[sizeof(_descripcion) - 1] = '\0';
     }

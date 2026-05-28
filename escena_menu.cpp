@@ -67,8 +67,12 @@ void EscenaMenu::handleEvents()
     }
 
     if (pantallaActual == Pantalla::Juego) {
-      if (pantallaJugar.handleEvent(event, window) == PantallaResultado::VolverMenu) {
+      const auto resultadoJuego = pantallaJugar.handleEvent(event, window);
+      if (resultadoJuego == PantallaResultado::VolverMenu) {
         volverAlMenu();
+      } else if (resultadoJuego == PantallaResultado::VolverJugador) {
+        sound.setVolume(100.f);
+        pantallaActual = Pantalla::Jugador;
       }
       continue;
     }
