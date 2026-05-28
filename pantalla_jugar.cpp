@@ -3,10 +3,12 @@
 #include <iostream>
 
 namespace
+// x,y, ancho, alto
 {
 const float coordenadasTexto[]= {0.f, 0.f, 1280.f, 100.f};
 const float coordenadasFoto[]= {75.f, 500.f, 150.f, 125.f};
-const float coordenadasAcciones[]= {650.f, 500.f, 500.f, 125.f};
+const float coordenadasAcciones[]= {650.f, 500.f, 450.f, 100.f};
+//const float coordenadasAcciones[]= {650.f, 500.f, 500.f, 125.f};
 
 const std::string acciones[] =
 {
@@ -53,14 +55,23 @@ PantallaJugar::PantallaJugar()
     textoJugador.setOutlineColor(sf::Color::Black);
     textoJugador.setOutlineThickness(1.f);
 
+    textoInstrucciones.setFont(font);
+    textoInstrucciones.setString("Instrucciones");
+    textoInstrucciones.setCharacterSize(24);
+    textoInstrucciones.setFillColor(sf::Color::White);
+    textoInstrucciones.setOutlineColor(sf::Color::Black);
+    textoInstrucciones.setOutlineThickness(1.f);
+
     actualizarTextoJugador();
     titulo.setPosition(60.f, 40.f);
-    textoJugador.setPosition(60.f, 92.f);
+    textoJugador.setPosition(60.f, 110.f);
+    textoInstrucciones.setPosition(750.f,620.f);
 }
 
 void PantallaJugar::setJugadorSeleccionado(int jugador)
 {
     jugadorSeleccionado = (jugador == 2) ? 2 : 1;
+    botoneraFoto.setPersonaje(jugadorSeleccionado);
     actualizarTextoJugador();
 }
 
@@ -83,6 +94,7 @@ void PantallaJugar::updateLayout(const sf::RenderWindow& window)
 
     titulo.setPosition(60.f, 40.f);
     textoJugador.setPosition(60.f, 92.f);
+    textoInstrucciones.setPosition(750.f,620.f);
 }
 
 PantallaResultado PantallaJugar::handleEvent(const sf::Event& event, sf::RenderWindow& window)
@@ -118,6 +130,7 @@ void PantallaJugar::draw(sf::RenderWindow& window) const
 
     window.draw(titulo);
     window.draw(textoJugador);
+    window.draw(textoInstrucciones);
     botoneraTexto.draw(window);
     botoneraFoto.draw(window);
     botoneraAcciones.draw(window);

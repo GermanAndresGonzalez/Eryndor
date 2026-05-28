@@ -12,12 +12,17 @@ private:
     int cantidadBotones;            // Cuántos botones se usan
     sf::Font fuente;                // Fuente para los textos
     sf::Sprite spCabezaJugador;      // Sprite para la cabeza del jugador
+    sf::Texture texturaCabezaJugador;
+    int personajeActual;
+
+    void actualizarSpriteCabeza();
 
 public:
     // Constructor 1: solo rectángulo
     //Botonera(float x, float y, float ancho, float alto, sf::Color color);
     Botonera(const float coordenadas[], sf::Color color);
     Botonera(const float coordenadas[], sf::Color color, int personaje);
+    void setPersonaje(int personaje);
 
     // Constructor 2: rectángulo + arreglo de strings
     Botonera(const float coordenadas[], sf::Color color,

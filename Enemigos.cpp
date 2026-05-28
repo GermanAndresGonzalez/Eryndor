@@ -1,5 +1,7 @@
-# include<iostream>
-# include "Enemigos.h"
+#include <cstring>
+#include <iostream>
+
+#include "Enemigos.h"
 
 using namespace std;
    Enemigos::Enemigos(){
@@ -20,7 +22,7 @@ using namespace std;
 
    }
 
-   Enemigos::Enemigos(int vidaActual, int vidaMaxima, int defensa, int ataque, int idEnemigo, int oroOtorgado, int expOtorgada, char nombre [50], char descripcion[150]){
+    Enemigos::Enemigos(int vidaActual, int vidaMaxima, int defensa, int ataque, int idEnemigo, int oroOtorgado, int expOtorgada, char nombre [50], char descripcion[150]){
    _vidaActual = vidaActual;
    _vidaMaxima = vidaMaxima;
    _defensa = defensa;
@@ -28,44 +30,46 @@ using namespace std;
    _idEnemigo = idEnemigo;
    _oroOtorgado = oroOtorgado;
    _expOtorgada = expOtorgada;
-   _nombre = nombre;
-   _descripcion = descripcion;
+    std::strncpy(_nombre, nombre, sizeof(_nombre) - 1);
+    _nombre[sizeof(_nombre) - 1] = '\0';
+    std::strncpy(_descripcion, descripcion, sizeof(_descripcion) - 1);
+    _descripcion[sizeof(_descripcion) - 1] = '\0';
    }
 
 
-   Enemigos::getvidaActual(){
+    int Enemigos::getvidaActual() const{
     return _vidaActual;
    }
 
-   Enemigos::getvidaMaxima(){
+    int Enemigos::getvidaMaxima() const{
     return _vidaMaxima;
    }
 
-   Enemigos::getdefensa(){
+    int Enemigos::getdefensa() const{
     return _defensa;
    }
 
-   Enemigos::getataque(){
+    int Enemigos::getataque() const{
     return _ataque;
    }
 
-   Enemigos::getidEnemigo(){
+    int Enemigos::getidEnemigo() const{
     return _idEnemigo;
    }
 
-   Enemigos::getoroOtorgado(){
+    int Enemigos::getoroOtorgado() const{
     return _oroOtorgado;
    }
 
-   Enemigos::getexpOtorgada(){
+    int Enemigos::getexpOtorgada() const{
     return _expOtorgada;
    }
 
-   Enemigos::getnombre(){
+    const char* Enemigos::getnombre() const{
     return _nombre;
    }
 
-   Enemigos::getdescripcion(){
+    const char* Enemigos::getdescripcion() const{
     return _descripcion;
    }
 
@@ -75,31 +79,37 @@ using namespace std;
     _vidaActual = vidaActual;
 }
 
-    void Enemigos::getvidaMaxima(int vidaMaxima){
+    void Enemigos::setvidaMaxima(int vidaMaxima){
     _vidaMaxima = vidaMaxima;
     }
 
-    void Enemigos::getdefensa(int defensa){
+    void Enemigos::setdefensa(int defensa){
     _defensa = defensa;
     }
 
-    void Enemigos::getataque(int ataque){
+    void Enemigos::setataque(int ataque){
     _ataque = ataque;
     }
 
-    void Enemigos::getoroOtorgado(int oroOtorgado){
+    void Enemigos::setidEnemigo(int idEnemigo){
+    _idEnemigo = idEnemigo;
+    }
+
+    void Enemigos::setoroOtorgado(int oroOtorgado){
     _oroOtorgado = oroOtorgado;
     }
 
-    void Enemigos::getexpOtorgada(int expOtorgada){
+    void Enemigos::setexpOtorgada(int expOtorgada){
     _expOtorgada = expOtorgada;
     }
 
-    void Enemigos::getnombre(char nombre[]){
-    _nombre = nombre;
+    void Enemigos::setnombre(char nombre[]){
+    std::strncpy(_nombre, nombre, sizeof(_nombre) - 1);
+    _nombre[sizeof(_nombre) - 1] = '\0';
     }
 
-    void Enemigos::getdescripcion(char descripcion[]){
-    _descripcion = descripcion;
+    void Enemigos::setdescripcion(char descripcion[]){
+    std::strncpy(_descripcion, descripcion, sizeof(_descripcion) - 1);
+    _descripcion[sizeof(_descripcion) - 1] = '\0';
     }
 

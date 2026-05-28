@@ -23,6 +23,7 @@ void EscenaMenu::updateLayout()
 
 void EscenaMenu::entrarAJuego()
 {
+  sound.setVolume(0.f);
   pantallaActual = Pantalla::Juego;
 }
 
@@ -44,6 +45,7 @@ void EscenaMenu::entrarAAcerca()
 
 void EscenaMenu::volverAlMenu()
 {
+  sound.setVolume(100.f);
   pantallaActual = Pantalla::Menu;
 }
 

@@ -1,8 +1,10 @@
 #include "botonera.h"
+#include <algorithm>
 #include <iostream>
 
 //Botonera::Botonera(float x, float y, float ancho, float alto, sf::Color color) {
 Botonera::Botonera(const float coordenadas[], sf::Color color)
+    : personajeActual(0)
 {
     fondo.setSize(sf::Vector2f(coordenadas[2], coordenadas[3]));
     fondo.setPosition(coordenadas[0], coordenadas[1]);
@@ -21,6 +23,7 @@ Botonera::Botonera(const float coordenadas[], sf::Color color)
 }
 
 Botonera::Botonera(const float coordenadas[], sf::Color color, int personaje)
+    : personajeActual(0)
 {
     fondo.setSize(sf::Vector2f(coordenadas[2], coordenadas[3]));
     fondo.setPosition(coordenadas[0], coordenadas[1]);
@@ -36,29 +39,59 @@ Botonera::Botonera(const float coordenadas[], sf::Color color, int personaje)
     {
         std::cerr << "Error cargando fuente" << std::endl;
     }
-    std::string ruta="recursos/imag/Jugadores/";
-    switch(personaje)
+    setPersonaje(personaje);
+
+
+
+}
+
+void Botonera::actualizarSpriteCabeza()
+{
+    if (texturaCabezaJugador.getSize().x == 0 || texturaCabezaJugador.getSize().y == 0)
     {
-    case 0:
-        ruta+="Cabeza_jugador1.png";
-        break;
-    case 1:
-        ruta+="Cabeza_jugador2.png";
-        break;
-
+        return;
     }
-    sf:: Texture texturaCabeza;
-    if (!texturaCabeza.loadFromFile(ruta))
+
+    spCabezaJugador.setTexture(texturaCabezaJugador, true);
+
+    const auto fondoBounds = fondo.getGlobalBounds();
+    const auto texturaSize = texturaCabezaJugador.getSize();
+    const float padding = 10.f;
+    const float anchoDisponible = std::max(0.f, fondoBounds.width - padding * 2.f);
+    const float altoDisponible = std::max(0.f, fondoBounds.height - padding * 2.f);
+    const float escalaX = anchoDisponible / static_cast<float>(texturaSize.x);
+    const float escalaY = altoDisponible / static_cast<float>(texturaSize.y);
+    const float escala = std::min(escalaX, escalaY);
+
+    spCabezaJugador.setScale(escala, escala);
+
+    const auto spriteBounds = spCabezaJugador.getGlobalBounds();
+    spCabezaJugador.setPosition(
+        fondoBounds.left + (fondoBounds.width - spriteBounds.width) / 2.f,
+        fondoBounds.top + (fondoBounds.height - spriteBounds.height) / 2.f);
+}
+
+void Botonera::setPersonaje(int personaje)
+{
+    personajeActual = (personaje == 2) ? 2 : 1;
+
+    std::string ruta = "recursos/imag/Jugadores/";
+    if (personajeActual == 2)
     {
-        std::cerr << "Error al cargando cabeza de jugador" << std::endl;
+        ruta += "Chico_j2.png";
     }
-    spCabezaJugador.setTexture(texturaCabeza);
-    float x= coordenadas[0];
-    float y=coordenadas[1];
-    spCabezaJugador.setPosition(x,y);
+    else
+    {
+        ruta += "Chico_j1.png";
+    }
 
+    if (!texturaCabezaJugador.loadFromFile(ruta))
+    {
+        std::cerr << "Error al cargar cabeza de jugador" << std::endl;
+        return;
+    }
 
-
+    actualizarSpriteCabeza();
 }
 
 
@@ -110,6 +143,7 @@ Botonera::~Botonera()
 void Botonera::draw(sf::RenderWindow& window) const
 {
     window.draw(fondo);
+    window.draw(spCabezaJugador);
     for (int i = 0; i < cantidadBotones; i++)
     {
         window.draw(botones[i]);

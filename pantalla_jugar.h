@@ -24,6 +24,7 @@ private:
     sf::Font    font;
     sf::Text    titulo;
     sf::Text    textoJugador;
+    sf::Text    textoInstrucciones;
 
     Botonera botoneraTexto;
     Botonera botoneraFoto;

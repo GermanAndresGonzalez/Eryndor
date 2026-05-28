@@ -5,19 +5,7 @@
 #include <iostream>
 
 namespace {
-/*
-const std::string botoneraIzquierdaOpciones[] = {
-    "Mover",
-    "Examinar",
-    "Usar"
-};
 
-const std::string botoneraDerechaOpciones[] = {
-    "Mapa",
-    "Inventario",
-    "Volver"
-};
-*/
 }
 
 MenuPrincipal2::MenuPrincipal2()
