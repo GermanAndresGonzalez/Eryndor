@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <memory>
 #include <vector>
 #include <string>
 
@@ -13,6 +12,10 @@
 class PantallaJugar {
 public:
     PantallaJugar();
+    ~PantallaJugar();
+
+    PantallaJugar(const PantallaJugar&) = delete;
+    PantallaJugar& operator=(const PantallaJugar&) = delete;
 
     PantallaResultado handleEvent(const sf::Event& event, sf::RenderWindow& window);
     void updateLayout(const sf::RenderWindow& window);
@@ -54,8 +57,8 @@ private:
     //Botonera botoneraTexto;
     Botonera botoneraAcciones;
     int jugadorSeleccionado = 1;
-    std::unique_ptr<Personaje> heroe;
-    std::unique_ptr<Enemigos> enemigo;
+    Personaje* heroe = nullptr;
+    Enemigos* enemigo = nullptr;
     std::vector<std::string> mensajesCombate;
     int pocionesRestantes = 3;
     int turnoCombate = 0;

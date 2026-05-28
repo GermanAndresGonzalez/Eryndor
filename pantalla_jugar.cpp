@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <iostream>
-#include <memory>
 #include <random>
 #include <sstream>
 
@@ -167,6 +166,12 @@ PantallaJugar::PantallaJugar()
     reiniciarBatalla();
 }
 
+PantallaJugar::~PantallaJugar()
+{
+    delete heroe;
+    delete enemigo;
+}
+
 void PantallaJugar::cargarEnemigoAleatorio()
 {
     indiceEnemigo = numeroAleatorio(0, 2);
@@ -181,7 +186,7 @@ void PantallaJugar::cargarEnemigoAleatorio()
     enemigoSprite.setTexture(enemigoTexture, true);
     posicionarPanelCombate(ultimaVentanaSize);
 
-    enemigo.reset(new Enemigos(
+    Enemigos* nuevoEnemigo = new Enemigos(
         plantilla.vidaMaxima,
         plantilla.vidaMaxima,
         plantilla.defensa,
@@ -190,7 +195,10 @@ void PantallaJugar::cargarEnemigoAleatorio()
         plantilla.oroOtorgado,
         plantilla.expOtorgada,
         plantilla.nombre,
-        plantilla.descripcion));
+        plantilla.descripcion);
+
+    delete enemigo;
+    enemigo = nuevoEnemigo;
 }
 
 void PantallaJugar::cargarJugadorSeleccionado()
@@ -255,7 +263,9 @@ void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
 void PantallaJugar::reiniciarBatalla()
 {
     const char* nombreHeroe = (jugadorSeleccionado == 2) ? "Lyra Voss" : "Kael Draven";
-    heroe.reset(new Personaje(nombreHeroe, 5, 100, 20, 10, 50, false));
+    Personaje* nuevoHeroe = new Personaje(nombreHeroe, 5, 100, 20, 10, 50, false);
+    delete heroe;
+    heroe = nuevoHeroe;
     pocionesRestantes = 3;
     turnoCombate = 0;
     combateFinalizado = false;

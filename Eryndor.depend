@@ -557,9 +557,8 @@
 
 1779994375 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_resultado.h
 
-1779997271 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.h
+1780001631 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.h
 	<SFML/Graphics.hpp>
-	<memory>
 	<vector>
 	<string>
 	"botonera.h"
@@ -599,11 +598,10 @@
 	"pantalla_acerca.h"
 	<iostream>
 
-1779998472 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
+1780001631 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
 	"pantalla_jugar.h"
 	<algorithm>
 	<iostream>
-	<memory>
 	<random>
 	<sstream>
 
