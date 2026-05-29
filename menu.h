@@ -5,7 +5,6 @@
 
 #include <cstddef>
 #include <string>
-#include <vector>
 
 /**
  * @brief Clase base genérica para menús con SFML.
@@ -102,7 +101,9 @@ protected:
   // -------------------------------------------------------------------------
   // Miembros protegidos
   // -------------------------------------------------------------------------
-  std::vector<sf::Text> items;
+  static constexpr std::size_t maxItems = 16;
+  sf::Text items[maxItems];
+  std::size_t cantidadItems = 0;
 
   sf::SoundBuffer soundBuffer;
   sf::Sound       sound;

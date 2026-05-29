@@ -49,16 +49,16 @@ int numeroAleatorio(int minimo, int maximo)
     return distribucion(generadorAleatorio());
 }
 
-std::string unirMensajes(const std::vector<std::string>& mensajes)
+std::string unirMensajes(const std::string mensajes[], std::size_t cantidad)
 {
     std::ostringstream salida;
     const std::size_t limite = 5;
-    const std::size_t inicio = mensajes.size() > limite ? mensajes.size() - limite : 0;
+    const std::size_t inicio = cantidad > limite ? cantidad - limite : 0;
 
-    for (std::size_t i = inicio; i < mensajes.size(); ++i)
+    for (std::size_t i = inicio; i < cantidad; ++i)
     {
         salida << mensajes[i];
-        if (i + 1 < mensajes.size())
+        if (i + 1 < cantidad)
         {
             salida << '\n';
         }
@@ -270,7 +270,7 @@ void PantallaJugar::reiniciarBatalla()
     turnoCombate = 0;
     combateFinalizado = false;
     victoria = false;
-    mensajesCombate.clear();
+    cantidadMensajesCombate = 0;
 
     actualizarTextoJugador();
     cargarJugadorSeleccionado();
@@ -297,10 +297,18 @@ void PantallaJugar::actualizarTextoJugador()
 
 void PantallaJugar::registrarMensaje(const std::string& mensaje)
 {
-    mensajesCombate.push_back(mensaje);
-    while (mensajesCombate.size() > 8)
+    if (cantidadMensajesCombate < maxMensajesCombate)
     {
-        mensajesCombate.erase(mensajesCombate.begin());
+        mensajesCombate[cantidadMensajesCombate++] = mensaje;
+    }
+    else
+    {
+        for (std::size_t i = 1; i < maxMensajesCombate; ++i)
+        {
+            mensajesCombate[i - 1] = mensajesCombate[i];
+        }
+
+        mensajesCombate[maxMensajesCombate - 1] = mensaje;
     }
 }
 
@@ -325,7 +333,7 @@ void PantallaJugar::actualizarTextosCombate()
             "  DEF: " + std::to_string(enemigo->getDefensa()));
     }
 
-    textoLogCombate.setString(unirMensajes(mensajesCombate));
+    textoLogCombate.setString(unirMensajes(mensajesCombate, cantidadMensajesCombate));
 
     if (combateFinalizado)
     {
@@ -393,7 +401,7 @@ void PantallaJugar::aplicarAtaqueJugador()
     if (critico)
     {
         danio *= 2;
-        registrarMensaje("¡GOLPE CRÍTICO!");
+        registrarMensaje("GOLPE CRITICO!");
     }
 
     enemigo->recibirDanio(danio);
@@ -404,7 +412,7 @@ void PantallaJugar::aplicarAtaqueJugador()
         victoria = true;
         combateFinalizado = true;
         heroe->agregarOro(enemigo->getoroOtorgado());
-        registrarMensaje(std::string("¡") + heroe->getNombre() + " ha vencido a " + enemigo->getnombre() + "!");
+        registrarMensaje(std::string("!") + heroe->getNombre() + " ha vencido a " + enemigo->getnombre() + "!");
         registrarMensaje("Oro obtenido: " + std::to_string(enemigo->getoroOtorgado()) +
                          " (total: " + std::to_string(heroe->getOro()) + ")");
         actualizarTextosCombate();
@@ -424,7 +432,7 @@ void PantallaJugar::aplicarCuracionJugador()
 
     if (pocionesRestantes <= 0)
     {
-        registrarMensaje("¡No te quedan curaciones! Atacas por inercia.");
+        registrarMensaje("No te quedan curaciones! Atacas por inercia.");
         aplicarAtaqueJugador();
         return;
     }

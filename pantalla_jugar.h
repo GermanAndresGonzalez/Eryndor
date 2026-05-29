@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <vector>
 #include <string>
 
 #include "botonera.h"
@@ -59,7 +58,9 @@ private:
     int jugadorSeleccionado = 1;
     Personaje* heroe = nullptr;
     Enemigos* enemigo = nullptr;
-    std::vector<std::string> mensajesCombate;
+    static constexpr std::size_t maxMensajesCombate = 8;
+    std::string mensajesCombate[maxMensajesCombate];
+    std::size_t cantidadMensajesCombate = 0;
     int pocionesRestantes = 3;
     int turnoCombate = 0;
     bool combateFinalizado = false;

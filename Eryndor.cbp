@@ -38,7 +38,7 @@
 			<Add library="sfml-graphics" />
 			<Add library="sfml-window" />
 			<Add library="sfml-system" />
-			<Add directory="SFML/build/lib" />
+			<Add directory="SFML/lib" />
 		</Linker>
 		<Unit filename="Enemigos.cpp">
 			<Option virtualFolder="Seres/Sources/" />

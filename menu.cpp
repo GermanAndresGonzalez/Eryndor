@@ -26,10 +26,9 @@ void Menu::initOpciones(const sf::Font&                 font,
                         float origenX,
                         float origenY)
 {
-  items.clear();
-  items.reserve(cantidadOpciones);
+  cantidadItems = (cantidadOpciones > maxItems) ? maxItems : cantidadOpciones;
 
-  for (std::size_t i = 0; i < cantidadOpciones; ++i) {
+  for (std::size_t i = 0; i < cantidadItems; ++i) {
     sf::Text texto;
     texto.setFont(font);
     texto.setString(opciones[i]);
@@ -38,7 +37,7 @@ void Menu::initOpciones(const sf::Font&                 font,
     texto.setOutlineColor(colorNormal);
     texto.setOutlineThickness(1.f);
     texto.setPosition(origenX, origenY + espaciado * static_cast<float>(i));
-    items.push_back(std::move(texto));
+    items[i] = std::move(texto);
   }
 }
 
@@ -48,8 +47,8 @@ void Menu::initOpciones(const sf::Font&                 font,
 
 void Menu::dibujar(sf::RenderWindow& window)
 {
-  for (auto& item : items) {
-    window.draw(item);
+  for (std::size_t i = 0; i < cantidadItems; ++i) {
+    window.draw(items[i]);
   }
 }
 
@@ -59,13 +58,13 @@ void Menu::dibujar(sf::RenderWindow& window)
 
 void Menu::moverArriba()
 {
-  if (items.empty()) return;
+  if (cantidadItems == 0) return;
 
   if (seleccionado >= 0)
     items[seleccionado].setFillColor(colorNormal);
 
   seleccionado = (seleccionado <= 0)
-                   ? static_cast<int>(items.size()) - 1
+                   ? static_cast<int>(cantidadItems) - 1
                    : seleccionado - 1;
 
   items[seleccionado].setFillColor(colorResaltado);
@@ -74,12 +73,12 @@ void Menu::moverArriba()
 
 void Menu::moverAbajo()
 {
-  if (items.empty()) return;
+  if (cantidadItems == 0) return;
 
   if (seleccionado >= 0)
     items[seleccionado].setFillColor(colorNormal);
 
-  seleccionado = (seleccionado + 1) % static_cast<int>(items.size());
+  seleccionado = (seleccionado + 1) % static_cast<int>(cantidadItems);
 
   items[seleccionado].setFillColor(colorResaltado);
   reproducirSonido();
@@ -91,7 +90,7 @@ void Menu::moverAbajo()
 
 int Menu::obtenerHover(int mouseX, int mouseY)
 {
-  for (int i = 0; i < static_cast<int>(items.size()); ++i) {
+  for (int i = 0; i < static_cast<int>(cantidadItems); ++i) {
     if (items[i].getGlobalBounds().contains(
             static_cast<float>(mouseX),
             static_cast<float>(mouseY)))
@@ -105,7 +104,7 @@ int Menu::obtenerHover(int mouseX, int mouseY)
 
 int Menu::obtenerClickeado(int mouseX, int mouseY)
 {
-  for (int i = 0; i < static_cast<int>(items.size()); ++i) {
+  for (int i = 0; i < static_cast<int>(cantidadItems); ++i) {
     if (items[i].getGlobalBounds().contains(
             static_cast<float>(mouseX),
             static_cast<float>(mouseY)))
