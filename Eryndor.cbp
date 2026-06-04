@@ -5,6 +5,7 @@
 		<Option title="Eryndor" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
+		<Option virtualFolders="Seres/;Pantallas/;Pantallas/Sources/;Pantallas/Headers/;Seres/Sources/;Seres/Headers/;Sistema de Items/;Sistema de Items/Headers/;Sistema de Items/Sources/;Archivos/;Partidas/;Partidas/Headers/;Partidas/Sources/" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/Eryndor" prefix_auto="1" extension_auto="1" />
@@ -37,11 +38,110 @@
 			<Add library="sfml-graphics" />
 			<Add library="sfml-window" />
 			<Add library="sfml-system" />
-			<Add directory="SFML/build/lib" />
+			<Add directory="SFML/lib" />
 		</Linker>
+		<Unit filename="Enemigos.cpp">
+			<Option virtualFolder="Seres/Sources/" />
+		</Unit>
+		<Unit filename="Enemigos.h">
+			<Option virtualFolder="Seres/Headers/" />
+		</Unit>
 		<Unit filename="MenuPrincipal.cpp" />
 		<Unit filename="MenuPrincipal.h" />
+		<Unit filename="archivos.cpp">
+			<Option virtualFolder="Archivos/" />
+		</Unit>
+		<Unit filename="archivos.h">
+			<Option virtualFolder="Archivos/" />
+		</Unit>
+		<Unit filename="botonera.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="botonera.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="escena_menu.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="escena_menu.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="inventario.cpp">
+			<Option virtualFolder="Sistema de Items/Sources/" />
+		</Unit>
+		<Unit filename="inventario.h">
+			<Option virtualFolder="Sistema de Items/Headers/" />
+		</Unit>
+		<Unit filename="item.cpp">
+			<Option virtualFolder="Sistema de Items/Sources/" />
+		</Unit>
+		<Unit filename="item.h">
+			<Option virtualFolder="Sistema de Items/Headers/" />
+		</Unit>
 		<Unit filename="main.cpp" />
+		<Unit filename="menu.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="menu.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="menu_principal.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="menu_principal.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_Jugador.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_Jugador.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_acerca.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_acerca.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_jugar.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_jugar.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_opciones.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_opciones.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_resultado.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="partidas.cpp">
+			<Option virtualFolder="Partidas/Sources/" />
+		</Unit>
+		<Unit filename="partidas.h">
+			<Option virtualFolder="Partidas/Headers/" />
+		</Unit>
+		<Unit filename="personaje.cpp">
+			<Option virtualFolder="Seres/Sources/" />
+		</Unit>
+		<Unit filename="personaje.h">
+			<Option virtualFolder="Seres/Headers/" />
+		</Unit>
+		<Unit filename="principal.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="principal.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="ventana_cueva.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="ventana_cueva.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
