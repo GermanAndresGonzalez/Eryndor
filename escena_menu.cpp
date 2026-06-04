@@ -27,6 +27,15 @@ void EscenaMenu::entrarAJuego()
   pantallaActual = Pantalla::Juego;
 }
 
+void EscenaMenu::cargarPartidaDesdeOpciones()
+{
+  if (pantallaJugar.cargarUltimaPartida())
+  {
+    sound.setVolume(0.f);
+    pantallaActual = Pantalla::Juego;
+  }
+}
+
 void EscenaMenu::entrarASeleccionJugador()
 {
   pantallaJugador.limpiarSeleccion();
@@ -96,8 +105,11 @@ void EscenaMenu::handleEvents()
     }
 
     if (pantallaActual == Pantalla::Opciones) {
-      if (pantallaOpciones.handleEvent(event, window) == PantallaResultado::VolverMenu) {
+      const auto resultadoOpciones = pantallaOpciones.handleEvent(event, window);
+      if (resultadoOpciones == PantallaResultado::VolverMenu) {
         volverAlMenu();
+      } else if (resultadoOpciones == PantallaResultado::CargarPartida) {
+        cargarPartidaDesdeOpciones();
       }
       continue;
     }

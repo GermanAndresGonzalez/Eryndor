@@ -149,7 +149,7 @@ PantallaJugar::PantallaJugar()
     }
 
     titulo.setFont(font);
-    titulo.setString("Batalla por turnos entre:");
+    titulo.setString("Batalla por turnos numero: 0");
     titulo.setCharacterSize(42);
     titulo.setFillColor(sf::Color::White);
     titulo.setOutlineColor(sf::Color::Black);
@@ -213,12 +213,6 @@ PantallaJugar::PantallaJugar()
     textoJugador.setPosition(60.f, 92.f);
     //textoInstrucciones.setPosition(60.f, 130.f);
 
-    if (!progresoInicializado)
-    {
-        inicializarPartidaYInventario();
-    }
-
-    reiniciarBatalla();
     posicionarPanelInventario(ultimaVentanaSize);
 }
 
@@ -319,6 +313,11 @@ void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
 
 void PantallaJugar::reiniciarBatalla()
 {
+    if (!progresoInicializado)
+    {
+        inicializarPartidaYInventario();
+    }
+
     const char* nombreHeroe = (jugadorSeleccionado == 2) ? "Lyra Voss" : "Kael Draven";
     Personaje* nuevoHeroe = new Personaje(nombreHeroe, 5, 100, 20, 10, 50, false);
     delete heroe;
@@ -349,6 +348,43 @@ void PantallaJugar::reiniciarBatalla()
     actualizarTextosCombate();
     posicionarPanelInventario(ultimaVentanaSize);
     guardarProgreso();
+}
+
+bool PantallaJugar::cargarPartidaPorId(int idPartida)
+{
+    ArchivoBinario<Partidas> archivoPartidasBinario("recursos/archivos/partidas.dat");
+    ArchivoBinario<Inventario> archivoInventariosBinario("recursos/archivos/inventarios.dat");
+
+    if (!archivoPartidasBinario.BuscarPorID(idPartida, partidaActual))
+    {
+        return false;
+    }
+
+    if (!archivoInventariosBinario.BuscarPorID(idPartida, inventario))
+    {
+        return false;
+    }
+
+    jugadorSeleccionado = (partidaActual.getIdPersonaje() == 2) ? 2 : 1;
+    inventario.setId(partidaActual.getId());
+    progresoInicializado = true;
+    cargarJugadorSeleccionado();
+    reiniciarBatalla();
+    titulo.setString("Batalla por turnos numero: " + std::to_string(partidaActual.getId()));
+    return true;
+}
+
+bool PantallaJugar::cargarUltimaPartida()
+{
+    ArchivoBinario<Partidas> archivoPartidasBinario("recursos/archivos/partidas.dat");
+    const int ultimoId = archivoPartidasBinario.ContarRegistros();
+
+    if (ultimoId <= 0)
+    {
+        return false;
+    }
+
+    return cargarPartidaPorId(ultimoId);
 }
 
 void PantallaJugar::setJugadorSeleccionado(int jugador)
@@ -576,7 +612,7 @@ void PantallaJugar::aplicarCuracionJugador()
     }
 
     inventario.quitarItem(idCuraBasica, 1);
-    inventario.GuardarInventario(archivoInventarios);
+    inventario.GuardarInventario("recursos/archivos/inventarios.dat");
     registrarMensaje(std::string(heroe->getNombre()) + " se cura " + std::to_string(curacion) + " puntos de vida.");
 
     turnoEnemigo();

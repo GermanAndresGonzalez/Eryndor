@@ -48,6 +48,7 @@ private:
   void entrarAOpciones();
   void entrarAAcerca();
   void volverAlMenu();
+  void cargarPartidaDesdeOpciones();
 
   MenuPrincipal menu;
   PantallaJugador pantallaJugador;

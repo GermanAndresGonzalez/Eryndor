@@ -24,6 +24,8 @@ public:
     void draw(sf::RenderWindow& window) const;
     void setJugadorSeleccionado(int jugadorSeleccionado);
     int getJugadorSeleccionado() const { return jugadorSeleccionado; }
+    bool cargarPartidaPorId(int idPartida);
+    bool cargarUltimaPartida();
 
 private:
     void actualizarTextoJugador();
