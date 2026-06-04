@@ -14,11 +14,30 @@ Personaje::Personaje(const char* nom, int niv, int vidaMax, int atk, int def, in
     defensa = def;
     oro = oroInicial;
     eliminado = elim;
+    armaEquipada = nullptr;
+    armaduraEquipada = nullptr;
+}
+
+void Personaje::equiparArma(const Item* arma)
+{
+    armaEquipada = arma;
+}
+
+void Personaje::equiparArmadura(const Item* armadura)
+{
+    armaduraEquipada = armadura;
 }
 
 int Personaje::atacar()
 {
-    return ataque + (nivel * 2);
+    int danio = ataque + (nivel * 2);
+
+    if (armaEquipada != nullptr && armaEquipada->getTipo() == ARMA)
+    {
+        danio += armaEquipada->getBonusAtaque();
+    }
+
+    return danio;
 }
 
 void Personaje::recibirDanio(int danio)
@@ -28,7 +47,14 @@ void Personaje::recibirDanio(int danio)
         return;
     }
 
-    int danioReal = danio - defensa;
+    int defensaTotal = defensa;
+
+    if (armaduraEquipada != nullptr && armaduraEquipada->getTipo() == ARMADURA)
+    {
+        defensaTotal += armaduraEquipada->getBonusDefensa();
+    }
+
+    int danioReal = danio - defensaTotal;
     if (danioReal < 0)
     {
         danioReal = 0;

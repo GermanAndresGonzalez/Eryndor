@@ -1,5 +1,7 @@
 #include "pantalla_jugar.h"
 
+#include "archivos.h"
+
 #include <algorithm>
 #include <iostream>
 #include <random>
@@ -8,6 +10,15 @@
 namespace
 // x,y, ancho, alto
 {
+const int idCuraBasica = 1;
+const int idEspadaInicial = 2;
+const int idArmaduraInicial = 3;
+const int idDagaBasica = 4;
+const int idArmaduraComun = 5;
+const int idArmaduraEspecial = 6;
+const char* archivoPartidas = "recursos/archivos/partidas.dat";
+const char* archivoInventarios = "recursos/archivos/inventarios.dat";
+
 const float coordenadasTexto[]= {2.f, 2.f, 1278.f, 100.f};
 const float coordenadasAcciones[]= {650.f, 560.f, 450.f, 100.f};
 
@@ -35,6 +46,28 @@ const PlantillaEnemigo plantillasEnemigos[] =
     {"recursos/imag/Enemigos/aracnido.png", "Aracnido", "Una bestia de multiples patas.", 80, 5, 15, 30, 20},
     {"recursos/imag/Enemigos/engendro.png", "Engendro", "Una criatura deformada por la cueva.", 100, 8, 18, 40, 35},
     {"recursos/imag/Enemigos/serpiente.png", "Serpiente", "Un reptil rapido y venenoso.", 70, 4, 20, 25, 15}
+};
+
+const Item curaBasicaDefinida(idCuraBasica, "Cura", CONSUMIBLE, 0, 0);
+const Item espadaInicialDefinida(idEspadaInicial, "Espada", ARMA, 8, 0);
+const Item armaduraInicialDefinida(idArmaduraInicial, "Armadura", ARMADURA, 0, 5);
+const Item dagaBasicaDefinida(idDagaBasica, "Daga", ARMA, 3, 0);
+const Item armaduraComunDefinida(idArmaduraComun, "Armadura comun", ARMADURA, 0, 2);
+const Item armaduraEspecialDefinida(idArmaduraEspecial, "Armadura especial", ARMADURA, 0, 8);
+
+struct ItemInventarioVisible
+{
+    const Item* item;
+    const char* etiqueta;
+};
+
+const ItemInventarioVisible itemsInventarioVisibles[] =
+{
+    {&curaBasicaDefinida, "Curas"},
+    {&dagaBasicaDefinida, "Daga"},
+    {&espadaInicialDefinida, "Espada"},
+    {&armaduraComunDefinida, "Armadura comun"},
+    {&armaduraEspecialDefinida, "Armadura especial"}
 };
 
 std::mt19937& generadorAleatorio()
@@ -93,7 +126,13 @@ sf::Vector2f centrarSpriteConLimite(sf::Sprite& sprite, const sf::Texture& textu
 
 PantallaJugar::PantallaJugar()
     //: botoneraTexto(coordenadasTexto, sf::Color(0, 0, 0, 150))
-    : botoneraAcciones(coordenadasAcciones, sf::Color(0, 0, 0, 150), acciones, 3)
+    : botoneraAcciones(coordenadasAcciones, sf::Color(0, 0, 0, 150), acciones, 3),
+      curaBasica(curaBasicaDefinida),
+      espadaInicial(espadaInicialDefinida),
+            armaduraInicial(armaduraInicialDefinida),
+            dagaBasica(dagaBasicaDefinida),
+            armaduraComun(armaduraComunDefinida),
+            armaduraEspecial(armaduraEspecialDefinida)
 {
     if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf"))
     {
@@ -121,6 +160,7 @@ PantallaJugar::PantallaJugar()
     textoJugador.setFillColor(sf::Color::White);
     textoJugador.setOutlineColor(sf::Color::Black);
     textoJugador.setOutlineThickness(1.f);
+    textoJugador.setString("Personaje elegido: Kael Draven");
 
     cargarJugadorSeleccionado();
     /*
@@ -155,19 +195,36 @@ PantallaJugar::PantallaJugar()
     textoControles.setOutlineColor(sf::Color::Black);
     textoControles.setOutlineThickness(1.f);
 
+    textoInventario.setFont(font);
+    textoInventario.setCharacterSize(18);
+    textoInventario.setFillColor(sf::Color::White);
+    textoInventario.setOutlineColor(sf::Color::Black);
+    textoInventario.setOutlineThickness(1.f);
+
     panelCombate.setFillColor(sf::Color(0, 0, 0, 170));
     panelCombate.setOutlineThickness(2.f);
     panelCombate.setOutlineColor(sf::Color::White);
+
+    panelInventario.setFillColor(sf::Color(0, 0, 0, 170));
+    panelInventario.setOutlineThickness(2.f);
+    panelInventario.setOutlineColor(sf::Color::White);
 
     titulo.setPosition(60.f, 40.f);
     textoJugador.setPosition(60.f, 92.f);
     //textoInstrucciones.setPosition(60.f, 130.f);
 
+    if (!progresoInicializado)
+    {
+        inicializarPartidaYInventario();
+    }
+
     reiniciarBatalla();
+    posicionarPanelInventario(ultimaVentanaSize);
 }
 
 PantallaJugar::~PantallaJugar()
 {
+    guardarProgreso();
     delete heroe;
     delete enemigo;
 }
@@ -266,7 +323,15 @@ void PantallaJugar::reiniciarBatalla()
     Personaje* nuevoHeroe = new Personaje(nombreHeroe, 5, 100, 20, 10, 50, false);
     delete heroe;
     heroe = nuevoHeroe;
-    pocionesRestantes = 3;
+    heroe->equiparArma(&espadaInicial);
+    heroe->equiparArmadura(&armaduraInicial);
+
+    if (progresoInicializado)
+    {
+        partidaActual.idPersonaje = (jugadorSeleccionado == 2) ? 2 : 1;
+        inventario.setId(partidaActual.getId());
+    }
+
     turnoCombate = 0;
     combateFinalizado = false;
     victoria = false;
@@ -277,9 +342,13 @@ void PantallaJugar::reiniciarBatalla()
     cargarEnemigoAleatorio();
     posicionarSpritesCombate(ultimaVentanaSize);
     posicionarPanelCombate(ultimaVentanaSize);
+    titulo.setString("Batalla por turnos numero: " + std::to_string(partidaActual.getId()));
     registrarMensaje("La batalla comienza contra " + std::string(enemigo->getnombre()) + ".");
     registrarMensaje("Usa A para atacar, C para curar y R para rendirte.");
+    actualizarTextoInventario();
     actualizarTextosCombate();
+    posicionarPanelInventario(ultimaVentanaSize);
+    guardarProgreso();
 }
 
 void PantallaJugar::setJugadorSeleccionado(int jugador)
@@ -312,6 +381,37 @@ void PantallaJugar::registrarMensaje(const std::string& mensaje)
     }
 }
 
+void PantallaJugar::inicializarPartidaYInventario()
+{
+    ArchivoBinario<Partidas> archivoPartidasBinario(archivoPartidas);
+    const int nuevoId = archivoPartidasBinario.GenerarID();
+    const int idPersonaje = (jugadorSeleccionado == 2) ? 2 : 1;
+
+    partidaActual = Partidas(nuevoId, idPersonaje, 1);
+    partidaActual.GuardarPartida(archivoPartidas);
+
+    inventario = Inventario();
+    inventario.setId(partidaActual.getId());
+    inventario.agregarItem(idCuraBasica, 2);
+    inventario.agregarItem(idEspadaInicial, 1);
+    inventario.agregarItem(idArmaduraInicial, 1);
+    inventario.GuardarInventario(archivoInventarios);
+
+    progresoInicializado = true;
+}
+
+void PantallaJugar::guardarProgreso()
+{
+    if (!progresoInicializado)
+    {
+        return;
+    }
+
+    partidaActual.GuardarPartida(archivoPartidas);
+    inventario.setId(partidaActual.getId());
+    inventario.GuardarInventario(archivoInventarios);
+}
+
 void PantallaJugar::actualizarTextosCombate()
 {
     if (heroe)
@@ -334,6 +434,7 @@ void PantallaJugar::actualizarTextosCombate()
     }
 
     textoLogCombate.setString(unirMensajes(mensajesCombate, cantidadMensajesCombate));
+    actualizarTextoInventario();
 
     if (combateFinalizado)
     {
@@ -347,13 +448,26 @@ void PantallaJugar::actualizarTextosCombate()
     alinearTextoControles();
 }
 
+void PantallaJugar::actualizarTextoInventario()
+{
+    std::ostringstream salida;
+    salida << "Inventario:";
+
+    for (const auto& entrada : itemsInventarioVisibles)
+    {
+        salida << '\n' << entrada.etiqueta << ": " << inventario.obtenerCantidad(entrada.item->getId());
+    }
+
+    textoInventario.setString(salida.str());
+}
+
 void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
 {
     const float panelAncho = static_cast<float>(windowSize.x) - 160.f;
     const float panelAlto = 190.f;
     const auto enemigoBounds = enemigoSprite.getGlobalBounds();
     float panelY = enemigoBounds.top + enemigoBounds.height + 38.f;
-    const float limiteInferior = static_cast<float>(windowSize.y) - panelAlto - 20.f;
+    const float limiteInferior = static_cast<float>(windowSize.y) - panelAlto + 20.f;
 
     if (panelY > limiteInferior)
     {
@@ -368,6 +482,18 @@ void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
     textoLogCombate.setPosition(96.f, panelY + 70.f);
 
     alinearTextoControles();
+}
+
+void PantallaJugar::posicionarPanelInventario(const sf::Vector2u& windowSize)
+{
+    const float panelAncho = 320.f;
+    const float panelAlto = 160.f;
+    const float panelX = 80.f;
+    const float panelY = static_cast<float>((windowSize.y) / 2.f - panelAlto / 2.f)-60.f;
+
+    panelInventario.setPosition(panelX, panelY);
+    panelInventario.setSize(sf::Vector2f(panelAncho, panelAlto));
+    textoInventario.setPosition(panelX + 20.f, panelY + 18.f);
 }
 
 void PantallaJugar::alinearTextoControles()
@@ -430,10 +556,10 @@ void PantallaJugar::aplicarCuracionJugador()
         return;
     }
 
-    if (pocionesRestantes <= 0)
+    if (!inventario.tieneCantidadNecesaria(idCuraBasica, 1))
     {
-        registrarMensaje("No te quedan curaciones! Atacas por inercia.");
-        aplicarAtaqueJugador();
+        registrarMensaje("No hay cura disponible");
+        actualizarTextosCombate();
         return;
     }
 
@@ -449,7 +575,8 @@ void PantallaJugar::aplicarCuracionJugador()
         return;
     }
 
-    pocionesRestantes--;
+    inventario.quitarItem(idCuraBasica, 1);
+    inventario.GuardarInventario(archivoInventarios);
     registrarMensaje(std::string(heroe->getNombre()) + " se cura " + std::to_string(curacion) + " puntos de vida.");
 
     turnoEnemigo();
@@ -500,6 +627,8 @@ void PantallaJugar::updateLayout(const sf::RenderWindow& window)
         posicionarPanelCombate(ultimaVentanaSize);
     }
 
+    posicionarPanelInventario(ultimaVentanaSize);
+
     titulo.setPosition(60.f, 40.f);
     textoJugador.setPosition(60.f, 92.f);
     //textoInstrucciones.setPosition(60.f, 130.f);
@@ -513,6 +642,7 @@ PantallaResultado PantallaJugar::handleEvent(const sf::Event& event, sf::RenderW
     {
         if (event.key.code == sf::Keyboard::Escape)
         {
+            guardarProgreso();
             return PantallaResultado::VolverJugador;
         }
 
@@ -530,6 +660,7 @@ PantallaResultado PantallaJugar::handleEvent(const sf::Event& event, sf::RenderW
             {
                 registrarMensaje(std::string("Te has rendido. ") + enemigo->getnombre() + " gana.");
                 actualizarTextosCombate();
+                guardarProgreso();
                 return PantallaResultado::VolverJugador;
             }
         }
@@ -544,6 +675,9 @@ void PantallaJugar::draw(sf::RenderWindow& window) const
     {
         window.draw(backgroundSprite);
     }
+
+    window.draw(panelInventario);
+    window.draw(textoInventario);
 
     if (jugadorTexture.getSize().x > 0)
     {

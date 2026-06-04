@@ -5,6 +5,9 @@
 
 #include "botonera.h"
 #include "Enemigos.h"
+#include "inventario.h"
+#include "item.h"
+#include "partidas.h"
 #include "personaje.h"
 #include "pantalla_resultado.h"
 
@@ -27,6 +30,7 @@ private:
     void cargarJugadorSeleccionado();
     void cargarEnemigoAleatorio();
     void posicionarSpritesCombate(const sf::Vector2u& windowSize);
+    void posicionarPanelInventario(const sf::Vector2u& windowSize);
     void reiniciarBatalla();
     void registrarMensaje(const std::string& mensaje);
     void actualizarTextosCombate();
@@ -35,6 +39,9 @@ private:
     void aplicarAtaqueJugador();
     void aplicarCuracionJugador();
     void turnoEnemigo();
+    void actualizarTextoInventario();
+    void inicializarPartidaYInventario();
+    void guardarProgreso();
 
     sf::Texture backgroundTexture;
     sf::Sprite  backgroundSprite;
@@ -51,19 +58,29 @@ private:
     sf::Text    textoEstadoEnemigo;
     sf::Text    textoLogCombate;
     sf::Text    textoControles;
+    sf::Text    textoInventario;
     sf::RectangleShape panelCombate;
+    sf::RectangleShape panelInventario;
 
     //Botonera botoneraTexto;
     Botonera botoneraAcciones;
     int jugadorSeleccionado = 1;
     Personaje* heroe = nullptr;
     Enemigos* enemigo = nullptr;
+    Inventario inventario;
+    Partidas partidaActual;
+    Item curaBasica;
+    Item espadaInicial;
+    Item armaduraInicial;
+    Item dagaBasica;
+    Item armaduraComun;
+    Item armaduraEspecial;
     static constexpr std::size_t maxMensajesCombate = 8;
     std::string mensajesCombate[maxMensajesCombate];
     std::size_t cantidadMensajesCombate = 0;
-    int pocionesRestantes = 3;
     int turnoCombate = 0;
     bool combateFinalizado = false;
     bool victoria = false;
     int indiceEnemigo = 0;
+    bool progresoInicializado = false;
 };

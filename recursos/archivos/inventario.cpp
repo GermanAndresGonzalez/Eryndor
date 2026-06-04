@@ -1,47 +1,16 @@
-#include <iostream>
+# include<iostream>
 #include "inventario.h"
 
 using namespace std;
 
 Inventario::Inventario()
 {
-    id = 0;
-    eliminado = false;
     _cantidadDeSlotsOcupados = 0;
       for (int i = 0; i < 100; i++)
     {
-                _slotsTotales[i].idItem = 0;
-                _slotsTotales[i].cantidad = 0;
+        _slotsTotales[i].idItem = 0;
+        _slotsTotales[i].cantidad = 0;
     }
-}
-
-int Inventario::getId() const
-{
-    return id;
-}
-
-void Inventario::setId(int nuevoId)
-{
-    id = nuevoId;
-}
-
-bool Inventario::GuardarInventario(const char* nombreArchivo)
-{
-    ArchivoBinario<Inventario> archivo(nombreArchivo);
-    const int posicion = archivo.BuscarPosicionPorID(id);
-
-    if (posicion >= 0)
-    {
-        return archivo.Modificar(posicion, *this);
-    }
-
-    return archivo.Agregar(*this);
-}
-
-bool Inventario::CargarInventario(int idBuscado, const char* nombreArchivo)
-{
-    ArchivoBinario<Inventario> archivo(nombreArchivo);
-    return archivo.BuscarPorID(idBuscado, *this);
 }
 
 
