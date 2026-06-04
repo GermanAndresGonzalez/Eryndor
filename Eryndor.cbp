@@ -46,8 +46,6 @@
 		<Unit filename="Enemigos.h">
 			<Option virtualFolder="Seres/Headers/" />
 		</Unit>
-		<Unit filename="MenuPrincipal.cpp" />
-		<Unit filename="MenuPrincipal.h" />
 		<Unit filename="archivos.cpp">
 			<Option virtualFolder="Archivos/" />
 		</Unit>
