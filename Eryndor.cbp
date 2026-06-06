@@ -5,7 +5,7 @@
 		<Option title="Eryndor" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="Seres/;Pantallas/;Pantallas/Sources/;Pantallas/Headers/;Seres/Sources/;Seres/Headers/;Sistema de Items/;Sistema de Items/Headers/;Sistema de Items/Sources/;Archivos/;Partidas/;Partidas/Headers/;Partidas/Sources/" />
+		<Option virtualFolders="Seres/;Pantallas/;Pantallas/Sources/;Pantallas/Headers/;Seres/Sources/;Seres/Headers/;Sistema de Items/;Sistema de Items/Headers/;Sistema de Items/Sources/;Archivos/;Partidas/;Partidas/Headers/;Partidas/Sources/;Acciones/;Acciones/Headers/;Acciones/Sources/" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/Eryndor" prefix_auto="1" extension_auto="1" />
@@ -40,12 +40,6 @@
 			<Add library="sfml-system" />
 			<Add directory="SFML/lib" />
 		</Linker>
-		<Unit filename="Enemigos.cpp">
-			<Option virtualFolder="Seres/Sources/" />
-		</Unit>
-		<Unit filename="Enemigos.h">
-			<Option virtualFolder="Seres/Headers/" />
-		</Unit>
 		<Unit filename="archivos.cpp">
 			<Option virtualFolder="Archivos/" />
 		</Unit>
@@ -57,6 +51,18 @@
 		</Unit>
 		<Unit filename="botonera.h">
 			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="combate.cpp">
+			<Option virtualFolder="Acciones/Sources/" />
+		</Unit>
+		<Unit filename="combate.h">
+			<Option virtualFolder="Acciones/Headers/" />
+		</Unit>
+		<Unit filename="enemigos.cpp">
+			<Option virtualFolder="Seres/Sources/" />
+		</Unit>
+		<Unit filename="enemigos.h">
+			<Option virtualFolder="Seres/Headers/" />
 		</Unit>
 		<Unit filename="escena_menu.cpp">
 			<Option virtualFolder="Pantallas/Sources/" />
