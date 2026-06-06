@@ -33,4 +33,5 @@ private:
     bool hoverJugador1 = false;
     bool hoverJugador2 = false;
     int jugadorSeleccionado = 0;
+
 };

@@ -1,26 +1,17 @@
 #include "pantalla_jugar.h"
 
-#include "archivos.h"
+//#include "combate.h"
 
 #include <algorithm>
 #include <iostream>
-#include <random>
 #include <sstream>
 
+// ---------------------------------------------------------------------------
+// Constantes de presentación
+// ---------------------------------------------------------------------------
 namespace
-// x,y, ancho, alto
 {
-const int idCuraBasica = 1;
-const int idEspadaInicial = 2;
-const int idArmaduraInicial = 3;
-const int idDagaBasica = 4;
-const int idArmaduraComun = 5;
-const int idArmaduraEspecial = 6;
-const char* archivoPartidas = "recursos/archivos/partidas.dat";
-const char* archivoInventarios = "recursos/archivos/inventarios.dat";
-
-const float coordenadasTexto[]= {2.f, 2.f, 1278.f, 100.f};
-const float coordenadasAcciones[]= {650.f, 560.f, 450.f, 100.f};
+const float coordenadasAcciones[] = {650.f, 560.f, 450.f, 100.f};
 
 const std::string acciones[] =
 {
@@ -29,60 +20,9 @@ const std::string acciones[] =
     "[R] Rendirse"
 };
 
-struct PlantillaEnemigo
-{
-    const char* imagen;
-    const char* nombre;
-    const char* descripcion;
-    int vidaMaxima;
-    int defensa;
-    int ataque;
-    int oroOtorgado;
-    int expOtorgada;
-};
-
-const PlantillaEnemigo plantillasEnemigos[] =
-{
-    {"recursos/imag/Enemigos/aracnido.png", "Aracnido", "Una bestia de multiples patas.", 80, 5, 15, 30, 20},
-    {"recursos/imag/Enemigos/engendro.png", "Engendro", "Una criatura deformada por la cueva.", 100, 8, 18, 40, 35},
-    {"recursos/imag/Enemigos/serpiente.png", "Serpiente", "Un reptil rapido y venenoso.", 70, 4, 20, 25, 15}
-};
-
-const Item curaBasicaDefinida(idCuraBasica, "Cura", CONSUMIBLE, 0, 0);
-const Item espadaInicialDefinida(idEspadaInicial, "Espada", ARMA, 8, 0);
-const Item armaduraInicialDefinida(idArmaduraInicial, "Armadura", ARMADURA, 0, 5);
-const Item dagaBasicaDefinida(idDagaBasica, "Daga", ARMA, 3, 0);
-const Item armaduraComunDefinida(idArmaduraComun, "Armadura comun", ARMADURA, 0, 2);
-const Item armaduraEspecialDefinida(idArmaduraEspecial, "Armadura especial", ARMADURA, 0, 8);
-
-struct ItemInventarioVisible
-{
-    const Item* item;
-    const char* etiqueta;
-};
-
-const ItemInventarioVisible itemsInventarioVisibles[] =
-{
-    {&curaBasicaDefinida, "Curas"},
-    {&dagaBasicaDefinida, "Daga"},
-    {&espadaInicialDefinida, "Espada"},
-    {&armaduraComunDefinida, "Armadura comun"},
-    {&armaduraEspecialDefinida, "Armadura especial"}
-};
-
-std::mt19937& generadorAleatorio()
-{
-    static std::mt19937 generador{std::random_device{}()};
-    return generador;
-}
-
-int numeroAleatorio(int minimo, int maximo)
-{
-    std::uniform_int_distribution<int> distribucion(minimo, maximo);
-    return distribucion(generadorAleatorio());
-}
-
-std::string unirMensajes(const std::string mensajes[], std::size_t cantidad)
+// Convierte el array de mensajes del Combate en un único string con saltos
+// de línea (muestra solo los últimos 5).
+std::string unirMensajes(const std::string* mensajes, std::size_t cantidad)
 {
     std::ostringstream salida;
     const std::size_t limite = 5;
@@ -96,111 +36,58 @@ std::string unirMensajes(const std::string mensajes[], std::size_t cantidad)
             salida << '\n';
         }
     }
-
     return salida.str();
 }
+} // namespace
 
-sf::Vector2f centrarSpriteConLimite(sf::Sprite& sprite, const sf::Texture& textura,
-                                    const sf::Vector2u& windowSize, float maxAncho, float maxAlto,
-                                    float offsetY = 0.f)
-{
-    if (textura.getSize().x == 0 || textura.getSize().y == 0)
-    {
-        return sf::Vector2f(0.f, 0.f);
-    }
-
-    const float escalaX = maxAncho / static_cast<float>(textura.getSize().x);
-    const float escalaY = maxAlto / static_cast<float>(textura.getSize().y);
-    const float escala = std::min(escalaX, escalaY);
-    sprite.setScale(escala, escala);
-
-    const auto bounds = sprite.getGlobalBounds();
-    const float posX = static_cast<float>(windowSize.x) / 2.f - bounds.width / 2.f;
-    const float posY = static_cast<float>(windowSize.y) / 2.f - bounds.height / 2.f + offsetY;
-    sprite.setPosition(posX, posY);
-
-    return sf::Vector2f(bounds.width, bounds.height);
-}
-}
-
-
+// ---------------------------------------------------------------------------
+// Constructor / destructor
+// ---------------------------------------------------------------------------
 PantallaJugar::PantallaJugar()
-    //: botoneraTexto(coordenadasTexto, sf::Color(0, 0, 0, 150))
-    : botoneraAcciones(coordenadasAcciones, sf::Color(0, 0, 0, 150), acciones, 3),
-      curaBasica(curaBasicaDefinida),
-      espadaInicial(espadaInicialDefinida),
-            armaduraInicial(armaduraInicialDefinida),
-            dagaBasica(dagaBasicaDefinida),
-            armaduraComun(armaduraComunDefinida),
-            armaduraEspecial(armaduraEspecialDefinida)
+    : botoneraAcciones(coordenadasAcciones, sf::Color(0, 0, 0, 150), acciones, 3)
 {
+    // -- Fuente --------------------------------------------------------------
     if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf"))
     {
         std::cerr << "PantallaJugar: no se pudo cargar la fuente\n";
     }
 
+    // -- Fondo ---------------------------------------------------------------
     if (!backgroundTexture.loadFromFile("recursos/imag/Cueva/cueva_1280x720.png"))
     {
-        std::cerr << "PantallaJugar: no se pudo cargar recursos/imag/cueva_1280x720.png\n";
+        std::cerr << "PantallaJugar: no se pudo cargar el fondo\n";
     }
     else
     {
         backgroundSprite.setTexture(backgroundTexture);
     }
 
+    // -- Textos --------------------------------------------------------------
+    auto configurarTexto = [&](sf::Text& t, unsigned int size)
+    {
+        t.setFont(font);
+        t.setCharacterSize(size);
+        t.setFillColor(sf::Color::White);
+        t.setOutlineColor(sf::Color::Black);
+        t.setOutlineThickness(1.f);
+    };
+
     titulo.setFont(font);
-    titulo.setString("Batalla por turnos numero: 0");
     titulo.setCharacterSize(42);
     titulo.setFillColor(sf::Color::White);
     titulo.setOutlineColor(sf::Color::Black);
     titulo.setOutlineThickness(2.f);
+    titulo.setString("Batalla por turnos numero: 0");
 
-    textoJugador.setFont(font);
-    textoJugador.setCharacterSize(24);
-    textoJugador.setFillColor(sf::Color::White);
-    textoJugador.setOutlineColor(sf::Color::Black);
-    textoJugador.setOutlineThickness(1.f);
+    configurarTexto(textoJugador,       24);
+    configurarTexto(textoEstadoHeroe,   20);
+    configurarTexto(textoEstadoEnemigo, 20);
+    configurarTexto(textoLogCombate,    19);
+    configurarTexto(textoControles,     18);
+    configurarTexto(textoInventario,    18);
     textoJugador.setString("Personaje elegido: Kael Draven");
 
-    cargarJugadorSeleccionado();
-    /*
-    textoInstrucciones.setFont(font);
-    textoInstrucciones.setString("Batalla por turnos");
-    textoInstrucciones.setCharacterSize(24);
-    textoInstrucciones.setFillColor(sf::Color::White);
-    textoInstrucciones.setOutlineColor(sf::Color::Black);
-    textoInstrucciones.setOutlineThickness(1.f);
-    */
-    textoEstadoHeroe.setFont(font);
-    textoEstadoHeroe.setCharacterSize(20);
-    textoEstadoHeroe.setFillColor(sf::Color::White);
-    textoEstadoHeroe.setOutlineColor(sf::Color::Black);
-    textoEstadoHeroe.setOutlineThickness(1.f);
-
-    textoEstadoEnemigo.setFont(font);
-    textoEstadoEnemigo.setCharacterSize(20);
-    textoEstadoEnemigo.setFillColor(sf::Color::White);
-    textoEstadoEnemigo.setOutlineColor(sf::Color::Black);
-    textoEstadoEnemigo.setOutlineThickness(1.f);
-
-    textoLogCombate.setFont(font);
-    textoLogCombate.setCharacterSize(19);
-    textoLogCombate.setFillColor(sf::Color::White);
-    textoLogCombate.setOutlineColor(sf::Color::Black);
-    textoLogCombate.setOutlineThickness(1.f);
-
-    textoControles.setFont(font);
-    textoControles.setCharacterSize(18);
-    textoControles.setFillColor(sf::Color::White);
-    textoControles.setOutlineColor(sf::Color::Black);
-    textoControles.setOutlineThickness(1.f);
-
-    textoInventario.setFont(font);
-    textoInventario.setCharacterSize(18);
-    textoInventario.setFillColor(sf::Color::White);
-    textoInventario.setOutlineColor(sf::Color::Black);
-    textoInventario.setOutlineThickness(1.f);
-
+    // -- Paneles -------------------------------------------------------------
     panelCombate.setFillColor(sf::Color(0, 0, 0, 170));
     panelCombate.setOutlineThickness(2.f);
     panelCombate.setOutlineColor(sf::Color::White);
@@ -211,437 +98,103 @@ PantallaJugar::PantallaJugar()
 
     titulo.setPosition(60.f, 40.f);
     textoJugador.setPosition(60.f, 92.f);
-    //textoInstrucciones.setPosition(60.f, 130.f);
 
     posicionarPanelInventario(ultimaVentanaSize);
 }
 
 PantallaJugar::~PantallaJugar()
 {
-    guardarProgreso();
-    delete heroe;
-    delete enemigo;
+    // Combate guarda el progreso en su propio destructor.
 }
 
-void PantallaJugar::cargarEnemigoAleatorio()
+// ---------------------------------------------------------------------------
+// Configuración pública
+// ---------------------------------------------------------------------------
+void PantallaJugar::setJugadorSeleccionado(int id)
 {
-    indiceEnemigo = numeroAleatorio(0, 2);
-    const auto& plantilla = plantillasEnemigos[indiceEnemigo];
-
-    if (!enemigoTexture.loadFromFile(plantilla.imagen))
-    {
-        std::cerr << "PantallaJugar: no se pudo cargar " << plantilla.imagen << '\n';
-        return;
-    }
-
-    enemigoSprite.setTexture(enemigoTexture, true);
-    posicionarPanelCombate(ultimaVentanaSize);
-
-    Enemigos* nuevoEnemigo = new Enemigos(
-        plantilla.vidaMaxima,
-        plantilla.vidaMaxima,
-        plantilla.defensa,
-        plantilla.ataque,
-        indiceEnemigo + 1,
-        plantilla.oroOtorgado,
-        plantilla.expOtorgada,
-        plantilla.nombre,
-        plantilla.descripcion);
-
-    delete enemigo;
-    enemigo = nuevoEnemigo;
-}
-
-void PantallaJugar::cargarJugadorSeleccionado()
-{
-    const char* ruta = (jugadorSeleccionado == 2)
-        ? "recursos/imag/Jugadores/Cabeza_jugador2.png"
-        : "recursos/imag/Jugadores/Cabeza_jugador1.png";
-
-    if (!jugadorTexture.loadFromFile(ruta))
-    {
-        std::cerr << "PantallaJugar: no se pudo cargar " << ruta << '\n';
-        return;
-    }
-
-    jugadorSprite.setTexture(jugadorTexture, true);
-}
-
-void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
-{
-    if (jugadorTexture.getSize().x == 0 || jugadorTexture.getSize().y == 0 ||
-        enemigoTexture.getSize().x == 0 || enemigoTexture.getSize().y == 0)
-    {
-        return;
-    }
-
-    const float maxAncho = 140.f;
-    const float maxAlto = 140.f;
-    const float separacion = 100.f;
-    const float centroY = static_cast<float>(windowSize.y) / 2.f - 70.f;
-
-    const float escalaJugadorX = maxAncho / static_cast<float>(jugadorTexture.getSize().x);
-    const float escalaJugadorY = maxAlto / static_cast<float>(jugadorTexture.getSize().y);
-    const float escalaJugador = std::min(escalaJugadorX, escalaJugadorY);
-    jugadorSprite.setScale(escalaJugador, escalaJugador);
-
-    const float escalaEnemigoX = maxAncho / static_cast<float>(enemigoTexture.getSize().x);
-    const float escalaEnemigoY = maxAlto / static_cast<float>(enemigoTexture.getSize().y);
-    const float escalaEnemigo = std::min(escalaEnemigoX, escalaEnemigoY);
-    enemigoSprite.setScale(escalaEnemigo, escalaEnemigo);
-
-    const auto boundsJugadorLocal = jugadorSprite.getLocalBounds();
-    const auto boundsEnemigoLocal = enemigoSprite.getLocalBounds();
-
-    jugadorSprite.setOrigin(
-        boundsJugadorLocal.left + boundsJugadorLocal.width / 2.f,
-        boundsJugadorLocal.top + boundsJugadorLocal.height / 2.f);
-
-    enemigoSprite.setOrigin(
-        boundsEnemigoLocal.left + boundsEnemigoLocal.width / 2.f,
-        boundsEnemigoLocal.top + boundsEnemigoLocal.height / 2.f);
-
-    const auto boundsJugador = jugadorSprite.getGlobalBounds();
-    const auto boundsEnemigo = enemigoSprite.getGlobalBounds();
-
-    const float totalAncho = boundsJugador.width + separacion + boundsEnemigo.width;
-    const float inicioX = static_cast<float>(windowSize.x) / 2.f - totalAncho / 2.f;
-
-    jugadorSprite.setPosition(inicioX + boundsJugador.width / 2.f, centroY);
-    enemigoSprite.setPosition(inicioX + boundsJugador.width + separacion + boundsEnemigo.width / 2.f, centroY);
-}
-
-void PantallaJugar::reiniciarBatalla()
-{
-    if (!progresoInicializado)
-    {
-        inicializarPartidaYInventario();
-    }
-
-    const char* nombreHeroe = (jugadorSeleccionado == 2) ? "Lyra Voss" : "Kael Draven";
-    Personaje* nuevoHeroe = new Personaje(nombreHeroe, 5, 100, 20, 10, 50, false);
-    delete heroe;
-    heroe = nuevoHeroe;
-    heroe->equiparArma(&espadaInicial);
-    heroe->equiparArmadura(&armaduraInicial);
-
-    if (progresoInicializado)
-    {
-        partidaActual.idPersonaje = (jugadorSeleccionado == 2) ? 2 : 1;
-        inventario.setId(partidaActual.getId());
-    }
-
-    turnoCombate = 0;
-    combateFinalizado = false;
-    victoria = false;
-    cantidadMensajesCombate = 0;
-
-    actualizarTextoJugador();
-    cargarJugadorSeleccionado();
-    cargarEnemigoAleatorio();
+    combate.setJugadorSeleccionado(id);
+    recargarSpriteJugador();
+    combate.reiniciarBatalla();
+    recargarSpriteEnemigo();
     posicionarSpritesCombate(ultimaVentanaSize);
     posicionarPanelCombate(ultimaVentanaSize);
-    titulo.setString("Batalla por turnos numero: " + std::to_string(partidaActual.getId()));
-    registrarMensaje("La batalla comienza contra " + std::string(enemigo->getnombre()) + ".");
-    registrarMensaje("Usa A para atacar, C para curar y R para rendirte.");
-    actualizarTextoInventario();
+    actualizarTextoJugador();
     actualizarTextosCombate();
+    actualizarTextoInventario();
+    titulo.setString("Batalla por turnos numero: " +
+                     std::to_string(combate.getIdPartida()));
     posicionarPanelInventario(ultimaVentanaSize);
-    guardarProgreso();
 }
 
 bool PantallaJugar::cargarPartidaPorId(int idPartida)
 {
-    ArchivoBinario<Partidas> archivoPartidasBinario("recursos/archivos/partidas.dat");
-    ArchivoBinario<Inventario> archivoInventariosBinario("recursos/archivos/inventarios.dat");
-
-    if (!archivoPartidasBinario.BuscarPorID(idPartida, partidaActual))
+    if (!combate.cargarPartidaPorId(idPartida))
     {
         return false;
     }
 
-    if (!archivoInventariosBinario.BuscarPorID(idPartida, inventario))
-    {
-        return false;
-    }
-
-    jugadorSeleccionado = (partidaActual.getIdPersonaje() == 2) ? 2 : 1;
-    inventario.setId(partidaActual.getId());
-    progresoInicializado = true;
-    cargarJugadorSeleccionado();
-    reiniciarBatalla();
-    titulo.setString("Batalla por turnos numero: " + std::to_string(partidaActual.getId()));
+    recargarSpriteJugador();
+    recargarSpriteEnemigo();
+    posicionarSpritesCombate(ultimaVentanaSize);
+    posicionarPanelCombate(ultimaVentanaSize);
+    actualizarTextoJugador();
+    actualizarTextosCombate();
+    actualizarTextoInventario();
+    titulo.setString("Batalla por turnos numero: " +
+                     std::to_string(combate.getIdPartida()));
     return true;
 }
 
 bool PantallaJugar::cargarUltimaPartida()
 {
-    ArchivoBinario<Partidas> archivoPartidasBinario("recursos/archivos/partidas.dat");
-    const int ultimoId = archivoPartidasBinario.ContarRegistros();
-
-    if (ultimoId <= 0)
+    if (!combate.cargarUltimaPartida())
     {
         return false;
     }
-
-    return cargarPartidaPorId(ultimoId);
+    recargarSpriteJugador();
+    recargarSpriteEnemigo();
+    posicionarSpritesCombate(ultimaVentanaSize);
+    posicionarPanelCombate(ultimaVentanaSize);
+    actualizarTextoJugador();
+    actualizarTextosCombate();
+    actualizarTextoInventario();
+    titulo.setString("Batalla por turnos numero: " +
+                     std::to_string(combate.getIdPartida()));
+    return true;
 }
 
-void PantallaJugar::setJugadorSeleccionado(int jugador)
+// ---------------------------------------------------------------------------
+// Ciclo principal
+// ---------------------------------------------------------------------------
+PantallaResultado PantallaJugar::handleEvent(const sf::Event& event,
+                                              sf::RenderWindow& window)
 {
-    jugadorSeleccionado = (jugador == 2) ? 2 : 1;
-    cargarJugadorSeleccionado();
-    reiniciarBatalla();
-}
-
-void PantallaJugar::actualizarTextoJugador()
-{
-    const std::string nombre = (jugadorSeleccionado == 2) ? "Lyra Voss" : "Kael Draven";
-    textoJugador.setString("Personaje elegido: " + nombre);
-}
-
-void PantallaJugar::registrarMensaje(const std::string& mensaje)
-{
-    if (cantidadMensajesCombate < maxMensajesCombate)
+    if (event.type == sf::Event::KeyPressed)
     {
-        mensajesCombate[cantidadMensajesCombate++] = mensaje;
-    }
-    else
-    {
-        for (std::size_t i = 1; i < maxMensajesCombate; ++i)
+        if (event.key.code == sf::Keyboard::Escape)
         {
-            mensajesCombate[i - 1] = mensajesCombate[i];
+            combate.guardarProgreso();
+            return PantallaResultado::VolverJugador;
         }
 
-        mensajesCombate[maxMensajesCombate - 1] = mensaje;
+        if (!combate.esCombateFinalizado())
+        {
+            if (event.key.code == sf::Keyboard::A)
+            {
+                accionAtacar();
+            }
+            else if (event.key.code == sf::Keyboard::C)
+            {
+                accionCurar();
+            }
+            else if (event.key.code == sf::Keyboard::R)
+            {
+                combate.guardarProgreso();
+                return PantallaResultado::VolverJugador;
+            }
+        }
     }
-}
-
-void PantallaJugar::inicializarPartidaYInventario()
-{
-    ArchivoBinario<Partidas> archivoPartidasBinario(archivoPartidas);
-    const int nuevoId = archivoPartidasBinario.GenerarID();
-    const int idPersonaje = (jugadorSeleccionado == 2) ? 2 : 1;
-
-    partidaActual = Partidas(nuevoId, idPersonaje, 1);
-    partidaActual.GuardarPartida(archivoPartidas);
-
-    inventario = Inventario();
-    inventario.setId(partidaActual.getId());
-    inventario.agregarItem(idCuraBasica, 2);
-    inventario.agregarItem(idEspadaInicial, 1);
-    inventario.agregarItem(idArmaduraInicial, 1);
-    inventario.GuardarInventario(archivoInventarios);
-
-    progresoInicializado = true;
-}
-
-void PantallaJugar::guardarProgreso()
-{
-    if (!progresoInicializado)
-    {
-        return;
-    }
-
-    partidaActual.GuardarPartida(archivoPartidas);
-    inventario.setId(partidaActual.getId());
-    inventario.GuardarInventario(archivoInventarios);
-}
-
-void PantallaJugar::actualizarTextosCombate()
-{
-    if (heroe)
-    {
-        textoEstadoHeroe.setString(
-            std::string("Jugador: ") + heroe->getNombre() +
-            "  HP: " + std::to_string(heroe->getVidaActual()) + "/" + std::to_string(heroe->getVidaMaxima()) +
-            "  ATK: " + std::to_string(heroe->getAtaque()) +
-            "  DEF: " + std::to_string(heroe->getDefensa()) +
-            "  Oro: " + std::to_string(heroe->getOro()));
-    }
-
-    if (enemigo)
-    {
-        textoEstadoEnemigo.setString(
-            std::string("Enemigo: ") + enemigo->getnombre() +
-            "  HP: " + std::to_string(enemigo->getVidaActual()) + "/" + std::to_string(enemigo->getVidaMaxima()) +
-            "  ATK: " + std::to_string(enemigo->getAtaque()) +
-            "  DEF: " + std::to_string(enemigo->getDefensa()));
-    }
-
-    textoLogCombate.setString(unirMensajes(mensajesCombate, cantidadMensajesCombate));
-    actualizarTextoInventario();
-
-    if (combateFinalizado)
-    {
-        textoControles.setString("Pulsa ESC para volver a la pantalla anterior.");
-    }
-    else
-    {
-        textoControles.setString("[A] Atacar   [C] Curar   [R] Rendirse");
-    }
-
-    alinearTextoControles();
-}
-
-void PantallaJugar::actualizarTextoInventario()
-{
-    std::ostringstream salida;
-    salida << "Inventario:";
-
-    for (const auto& entrada : itemsInventarioVisibles)
-    {
-        salida << '\n' << entrada.etiqueta << ": " << inventario.obtenerCantidad(entrada.item->getId());
-    }
-
-    textoInventario.setString(salida.str());
-}
-
-void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
-{
-    const float panelAncho = static_cast<float>(windowSize.x) - 160.f;
-    const float panelAlto = 190.f;
-    const auto enemigoBounds = enemigoSprite.getGlobalBounds();
-    float panelY = enemigoBounds.top + enemigoBounds.height + 38.f;
-    const float limiteInferior = static_cast<float>(windowSize.y) - panelAlto + 20.f;
-
-    if (panelY > limiteInferior)
-    {
-        panelY = limiteInferior;
-    }
-
-    panelCombate.setPosition(80.f, panelY);
-    panelCombate.setSize(sf::Vector2f(panelAncho, panelAlto));
-
-    textoEstadoHeroe.setPosition(96.f, panelY + 12.f);
-    textoEstadoEnemigo.setPosition(96.f, panelY + 38.f);
-    textoLogCombate.setPosition(96.f, panelY + 70.f);
-
-    alinearTextoControles();
-}
-
-void PantallaJugar::posicionarPanelInventario(const sf::Vector2u& windowSize)
-{
-    const float panelAncho = 320.f;
-    const float panelAlto = 160.f;
-    const float panelX = 80.f;
-    const float panelY = static_cast<float>((windowSize.y) / 2.f - panelAlto / 2.f)-60.f;
-
-    panelInventario.setPosition(panelX, panelY);
-    panelInventario.setSize(sf::Vector2f(panelAncho, panelAlto));
-    textoInventario.setPosition(panelX + 20.f, panelY + 18.f);
-}
-
-void PantallaJugar::alinearTextoControles()
-{
-    const auto panelPos = panelCombate.getPosition();
-    const auto panelSize = panelCombate.getSize();
-    const auto bounds = textoControles.getLocalBounds();
-
-    textoControles.setOrigin(bounds.left + bounds.width, bounds.top);
-    textoControles.setPosition(panelPos.x + panelSize.x - 20.f, panelPos.y + panelSize.y - 30.f);
-}
-
-void PantallaJugar::aplicarAtaqueJugador()
-{
-    if (!heroe || !enemigo || combateFinalizado)
-    {
-        return;
-    }
-
-    turnoCombate++;
-    registrarMensaje("--- Turno " + std::to_string(turnoCombate) + " ---");
-
-    int danio = heroe->atacar();
-    danio += numeroAleatorio(-5, 5);
-    if (danio < 0)
-    {
-        danio = 0;
-    }
-
-    const bool critico = numeroAleatorio(0, 99) < 20;
-    if (critico)
-    {
-        danio *= 2;
-        registrarMensaje("GOLPE CRITICO!");
-    }
-
-    enemigo->recibirDanio(danio);
-    registrarMensaje(std::string(heroe->getNombre()) + " ataca por " + std::to_string(danio) + " de danio.");
-
-    if (enemigo->estaEliminado())
-    {
-        victoria = true;
-        combateFinalizado = true;
-        heroe->agregarOro(enemigo->getoroOtorgado());
-        registrarMensaje(std::string("!") + heroe->getNombre() + " ha vencido a " + enemigo->getnombre() + "!");
-        registrarMensaje("Oro obtenido: " + std::to_string(enemigo->getoroOtorgado()) +
-                         " (total: " + std::to_string(heroe->getOro()) + ")");
-        actualizarTextosCombate();
-        return;
-    }
-
-    turnoEnemigo();
-    actualizarTextosCombate();
-}
-
-void PantallaJugar::aplicarCuracionJugador()
-{
-    if (!heroe || !enemigo || combateFinalizado)
-    {
-        return;
-    }
-
-    if (!inventario.tieneCantidadNecesaria(idCuraBasica, 1))
-    {
-        registrarMensaje("No hay cura disponible");
-        actualizarTextosCombate();
-        return;
-    }
-
-    turnoCombate++;
-    registrarMensaje("--- Turno " + std::to_string(turnoCombate) + " ---");
-
-    const int curacion = 25 + numeroAleatorio(0, 10);
-    if (!heroe->curar(curacion))
-    {
-        registrarMensaje(std::string(heroe->getNombre()) + " ya tiene la vida al maximo.");
-        turnoCombate--;
-        actualizarTextosCombate();
-        return;
-    }
-
-    inventario.quitarItem(idCuraBasica, 1);
-    inventario.GuardarInventario("recursos/archivos/inventarios.dat");
-    registrarMensaje(std::string(heroe->getNombre()) + " se cura " + std::to_string(curacion) + " puntos de vida.");
-
-    turnoEnemigo();
-    actualizarTextosCombate();
-}
-
-void PantallaJugar::turnoEnemigo()
-{
-    if (!heroe || !enemigo || combateFinalizado)
-    {
-        return;
-    }
-
-    int danioEnemigo = enemigo->atacar();
-    danioEnemigo += numeroAleatorio(-5, 5);
-    if (danioEnemigo < 0)
-    {
-        danioEnemigo = 0;
-    }
-
-    heroe->recibirDanio(danioEnemigo);
-    registrarMensaje(std::string(enemigo->getnombre()) + " ataca por " + std::to_string(danioEnemigo) + " de danio.");
-
-    if (heroe->estaEliminado())
-    {
-        combateFinalizado = true;
-        victoria = false;
-        registrarMensaje(std::string(heroe->getNombre()) + " ha sido derrotado...");
-    }
+    return PantallaResultado::Nada;
 }
 
 void PantallaJugar::updateLayout(const sf::RenderWindow& window)
@@ -650,11 +203,11 @@ void PantallaJugar::updateLayout(const sf::RenderWindow& window)
 
     if (backgroundTexture.getSize().x > 0 && backgroundTexture.getSize().y > 0)
     {
-        const auto windowSize = window.getSize();
-        const auto textureSize = backgroundTexture.getSize();
+        const auto ws = window.getSize();
+        const auto ts = backgroundTexture.getSize();
         backgroundSprite.setScale(
-            static_cast<float>(windowSize.x) / static_cast<float>(textureSize.x),
-            static_cast<float>(windowSize.y) / static_cast<float>(textureSize.y));
+            static_cast<float>(ws.x) / static_cast<float>(ts.x),
+            static_cast<float>(ws.y) / static_cast<float>(ts.y));
     }
 
     if (enemigoTexture.getSize().x > 0 && enemigoTexture.getSize().y > 0)
@@ -667,42 +220,8 @@ void PantallaJugar::updateLayout(const sf::RenderWindow& window)
 
     titulo.setPosition(60.f, 40.f);
     textoJugador.setPosition(60.f, 92.f);
-    //textoInstrucciones.setPosition(60.f, 130.f);
 
     actualizarTextosCombate();
-}
-
-PantallaResultado PantallaJugar::handleEvent(const sf::Event& event, sf::RenderWindow& window)
-{
-    if (event.type == sf::Event::KeyPressed)
-    {
-        if (event.key.code == sf::Keyboard::Escape)
-        {
-            guardarProgreso();
-            return PantallaResultado::VolverJugador;
-        }
-
-        if (!combateFinalizado)
-        {
-            if (event.key.code == sf::Keyboard::A)
-            {
-                aplicarAtaqueJugador();
-            }
-            else if (event.key.code == sf::Keyboard::C)
-            {
-                aplicarCuracionJugador();
-            }
-            else if (event.key.code == sf::Keyboard::R)
-            {
-                registrarMensaje(std::string("Te has rendido. ") + enemigo->getnombre() + " gana.");
-                actualizarTextosCombate();
-                guardarProgreso();
-                return PantallaResultado::VolverJugador;
-            }
-        }
-    }
-
-    return PantallaResultado::Nada;
 }
 
 void PantallaJugar::draw(sf::RenderWindow& window) const
@@ -730,9 +249,215 @@ void PantallaJugar::draw(sf::RenderWindow& window) const
     window.draw(textoEstadoEnemigo);
     window.draw(textoLogCombate);
     window.draw(textoControles);
-
     window.draw(titulo);
     window.draw(textoJugador);
-    //window.draw(textoInstrucciones);
-    //botoneraTexto.draw(window);
+}
+
+// ---------------------------------------------------------------------------
+// Acciones de combate (wrappers: lógica → Combate, UI → aquí)
+// ---------------------------------------------------------------------------
+void PantallaJugar::accionAtacar()
+{
+    combate.aplicarAtaqueJugador();
+    actualizarTextosCombate();
+}
+
+void PantallaJugar::accionCurar()
+{
+    combate.aplicarCuracionJugador();
+    actualizarTextosCombate();
+    actualizarTextoInventario();
+}
+
+// ---------------------------------------------------------------------------
+// Carga de sprites
+// ---------------------------------------------------------------------------
+void PantallaJugar::recargarSpriteJugador()
+{
+    const char* ruta = (combate.getJugadorSeleccionado() == 2)
+        ? "recursos/imag/Jugadores/Cabeza_jugador2.png"
+        : "recursos/imag/Jugadores/Cabeza_jugador1.png";
+
+    if (!jugadorTexture.loadFromFile(ruta))
+    {
+        std::cerr << "PantallaJugar: no se pudo cargar " << ruta << '\n';
+        return;
+    }
+    jugadorSprite.setTexture(jugadorTexture, true);
+}
+
+void PantallaJugar::recargarSpriteEnemigo()
+{
+    const char* ruta = combate.getRutaImagenEnemigo();
+    if (!enemigoTexture.loadFromFile(ruta))
+    {
+        std::cerr << "PantallaJugar: no se pudo cargar " << ruta << '\n';
+        return;
+    }
+    enemigoSprite.setTexture(enemigoTexture, true);
+    posicionarPanelCombate(ultimaVentanaSize);
+}
+
+// ---------------------------------------------------------------------------
+// Posicionamiento de sprites
+// ---------------------------------------------------------------------------
+void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
+{
+    if (jugadorTexture.getSize().x == 0 || enemigoTexture.getSize().x == 0)
+    {
+        return;
+    }
+
+    const float maxAncho  = 140.f;
+    const float maxAlto   = 140.f;
+    const float separacion = 100.f;
+    const float centroY   = static_cast<float>(windowSize.y) / 2.f - 70.f;
+
+    auto escalarSprite = [&](sf::Sprite& spr, const sf::Texture& tex)
+    {
+        const float sx = maxAncho / static_cast<float>(tex.getSize().x);
+        const float sy = maxAlto  / static_cast<float>(tex.getSize().y);
+        spr.setScale(std::min(sx, sy), std::min(sx, sy));
+    };
+
+    escalarSprite(jugadorSprite, jugadorTexture);
+    escalarSprite(enemigoSprite, enemigoTexture);
+
+    auto centrarOrigen = [](sf::Sprite& spr)
+    {
+        const auto b = spr.getLocalBounds();
+        spr.setOrigin(b.left + b.width / 2.f, b.top + b.height / 2.f);
+    };
+
+    centrarOrigen(jugadorSprite);
+    centrarOrigen(enemigoSprite);
+
+    const auto bj = jugadorSprite.getGlobalBounds();
+    const auto be = enemigoSprite.getGlobalBounds();
+
+    const float totalAncho = bj.width + separacion + be.width;
+    const float inicioX    = static_cast<float>(windowSize.x) / 2.f - totalAncho / 2.f;
+
+    jugadorSprite.setPosition(inicioX + bj.width / 2.f, centroY);
+    enemigoSprite.setPosition(inicioX + bj.width + separacion + be.width / 2.f, centroY);
+}
+
+// ---------------------------------------------------------------------------
+// Posicionamiento de paneles
+// ---------------------------------------------------------------------------
+void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
+{
+    const float panelAncho    = static_cast<float>(windowSize.x) - 160.f;
+    const float panelAlto     = 190.f;
+    const auto  enemigoBounds = enemigoSprite.getGlobalBounds();
+    float panelY              = enemigoBounds.top + enemigoBounds.height + 38.f;
+    const float limiteInferior = static_cast<float>(windowSize.y) - panelAlto + 20.f;
+
+    if (panelY > limiteInferior)
+    {
+        panelY = limiteInferior;
+    }
+
+    panelCombate.setPosition(80.f, panelY);
+    panelCombate.setSize(sf::Vector2f(panelAncho, panelAlto));
+
+    textoEstadoHeroe.setPosition  (96.f, panelY + 12.f);
+    textoEstadoEnemigo.setPosition(96.f, panelY + 38.f);
+    textoLogCombate.setPosition   (96.f, panelY + 70.f);
+
+    alinearTextoControles();
+}
+
+void PantallaJugar::posicionarPanelInventario(const sf::Vector2u& windowSize)
+{
+    const float panelAncho = 320.f;
+    const float panelAlto  = 160.f;
+    const float panelX     = 80.f;
+    const float panelY     = static_cast<float>(windowSize.y) / 2.f - panelAlto / 2.f - 60.f;
+
+    panelInventario.setPosition(panelX, panelY);
+    panelInventario.setSize(sf::Vector2f(panelAncho, panelAlto));
+    textoInventario.setPosition(panelX + 20.f, panelY + 18.f);
+}
+
+void PantallaJugar::alinearTextoControles()
+{
+    const auto panelPos  = panelCombate.getPosition();
+    const auto panelSize = panelCombate.getSize();
+    const auto bounds    = textoControles.getLocalBounds();
+
+    textoControles.setOrigin(bounds.left + bounds.width, bounds.top);
+    textoControles.setPosition(panelPos.x + panelSize.x - 20.f,
+                               panelPos.y + panelSize.y - 30.f);
+}
+
+// ---------------------------------------------------------------------------
+// Actualización de textos de UI
+// ---------------------------------------------------------------------------
+void PantallaJugar::actualizarTextoJugador()
+{
+    textoJugador.setString(
+        std::string("Personaje elegido: ") + combate.getNombreJugador());
+}
+
+void PantallaJugar::actualizarTextosCombate()
+{
+    const Personaje* heroe   = combate.getHeroe();
+    const Enemigos*  enemigo = combate.getEnemigo();
+
+    if (heroe)
+    {
+        textoEstadoHeroe.setString(
+            std::string("Jugador: ") + heroe->getNombre() +
+            "  HP: "  + std::to_string(heroe->getVidaActual()) + "/" +
+                        std::to_string(heroe->getVidaMaxima()) +
+            "  ATK: " + std::to_string(heroe->getAtaque()) +
+            "  DEF: " + std::to_string(heroe->getDefensa()) +
+            "  Oro: " + std::to_string(heroe->getOro()));
+    }
+
+    if (enemigo)
+    {
+        textoEstadoEnemigo.setString(
+            std::string("Enemigo: ") + enemigo->getnombre() +
+            "  HP: "  + std::to_string(enemigo->getVidaActual()) + "/" +
+                        std::to_string(enemigo->getVidaMaxima()) +
+            "  ATK: " + std::to_string(enemigo->getAtaque()) +
+            "  DEF: " + std::to_string(enemigo->getDefensa()));
+    }
+
+    textoLogCombate.setString(
+        unirMensajes(combate.getMensajes(), combate.getCantidadMensajes()));
+
+    actualizarTextoInventario();
+
+    textoControles.setString(
+        combate.esCombateFinalizado()
+            ? "Pulsa ESC para volver a la pantalla anterior."
+            : "[A] Atacar   [C] Curar   [R] Rendirse");
+
+    alinearTextoControles();
+}
+
+void PantallaJugar::actualizarTextoInventario()
+{
+    // IDs e ítems visibles en el panel de inventario
+    struct EntradaVisible { int id; const char* etiqueta; };
+    static const EntradaVisible entradas[] =
+    {
+        {1, "Curas"},
+        {4, "Daga"},
+        {2, "Espada"},
+        {5, "Armadura comun"},
+        {6, "Armadura especial"}
+    };
+
+    std::ostringstream salida;
+    salida << "Inventario:";
+    for (const auto& e : entradas)
+    {
+        salida << '\n' << e.etiqueta << ": "
+               << combate.getInventario().obtenerCantidad(e.id);
+    }
+    textoInventario.setString(salida.str());
 }

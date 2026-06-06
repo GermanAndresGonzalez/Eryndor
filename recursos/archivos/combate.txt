@@ -1,0 +1,8 @@
+void cargarJugadorSeleccionado();
+void cargarEnemigoAleatorio();
+void reiniciarBatalla();
+void aplicarAtaqueJugador();
+void aplicarCuracionJugador();
+void turnoEnemigo();
+void inicializarPartidaYInventario();
+
