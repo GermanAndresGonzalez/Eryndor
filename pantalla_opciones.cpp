@@ -1,24 +1,32 @@
 #include "pantalla_opciones.h"
 
 #include "archivos.h"
-
-#include "exploracion.h"
-
 #include "partidas.h"
+
 
 #include <algorithm>
 #include <iostream>
 #include <sstream>
 
+namespace
+{
+const char* archivoPartidas    = "recursos/archivos/partidas.dat";
+Partidas partidaActual;
+
+}
 PantallaOpciones::PantallaOpciones()
 {
-    if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf")) {
+    if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf"))
+    {
         std::cerr << "PantallaOpciones: no se pudo cargar la fuente\n";
     }
 
-    if (!backgroundTexture.loadFromFile("recursos/imag/Cueva/cueva_1280x720.png")) {
+    if (!backgroundTexture.loadFromFile("recursos/imag/Cueva/cueva_1280x720.png"))
+    {
         std::cerr << "PantallaOpciones: no se pudo cargar recursos/imag/cueva_1280x720.png\n";
-    } else {
+    }
+    else
+    {
         backgroundSprite.setTexture(backgroundTexture);
     }
     auto configurarTexto = [&](sf::Text& t, unsigned int size)
@@ -69,11 +77,13 @@ PantallaOpciones::PantallaOpciones()
 
     posicionarElementos(sf::Vector2u{1280u, 720u});
     posicionarPanelInventario(sf::Vector2u{1280u, 720u});
+    actualizarTextoInventario();
 }
 
 void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
 {
-    if (backgroundTexture.getSize().x > 0 && backgroundTexture.getSize().y > 0) {
+    if (backgroundTexture.getSize().x > 0 && backgroundTexture.getSize().y > 0)
+    {
         const auto windowSize = window.getSize();
         const auto textureSize = backgroundTexture.getSize();
         backgroundSprite.setScale(
@@ -83,6 +93,7 @@ void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
 
     posicionarElementos(window.getSize());
     posicionarPanelInventario(window.getSize());
+    actualizarTextoInventario();
 
 }
 
@@ -90,7 +101,7 @@ void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
 void PantallaOpciones::posicionarPanelInventario(const sf::Vector2u& windowSize)
 {
     const float panelAncho = 320.f;
-    const float panelAlto  = 160.f;
+    const float panelAlto  = 260.f;
     const float panelX     = 80.f;
     const float panelY     = static_cast<float>(windowSize.y) / 2.f - panelAlto / 2.f - 60.f;
 
@@ -101,43 +112,40 @@ void PantallaOpciones::posicionarPanelInventario(const sf::Vector2u& windowSize)
 
 void PantallaOpciones::actualizarTextoInventario()
 {
-    Exploracion exploracion;
-    // IDs e ítems visibles en el panel de inventario
-    struct EntradaVisible { int id; const char* etiqueta; };
-    static const EntradaVisible entradas[] =
-    {
-        {1, "Curas"},
-        {4, "Daga"},
-        {2, "Espada"},
-        {5, "Armadura comun"},
-        {6, "Armadura especial"}
-    };
-
     std::ostringstream salida;
-    salida << "Inventario de partidas:";
 
-    for (const auto& e : entradas)
+
+
+    ArchivoBinario<Partidas> archivoPartidasBin(archivoPartidas);
+
+    int cantRegistros=archivoPartidasBin.ContarRegistros();
+    if (cantRegistros == 0)
     {
-        salida << '\n' << e.etiqueta << ": "
-               << exploracion.getInventario().obtenerCantidad(e.id);
+        salida << "No hay partidas encontradas.";
+        return;
+    }
+    else
+    {
+        salida << "Ultimas " << cantRegistros << " partidas:\n";
+        int limite =(cantRegistros>10) ? cantRegistros-10:0;
+        Partidas partida;
+        for (int i = cantRegistros - 1; i >= limite; i--)
+        {
+            if (archivoPartidasBin.BuscarPorID(i, partida))
+                if (!partida.estaEliminada())
+                {
+                    salida << "Numero de partida: " << partida.getId() << "\n";
+                }
+        }
     }
 
+
+    //salida << "\n " << "Cantidad de registros: " << archivoPartidasBin.ContarRegistros() << "\n";
+
+
     textoInventario.setString(salida.str());
+
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 void PantallaOpciones::posicionarElementos(const sf::Vector2u& windowSize)
@@ -259,11 +267,12 @@ PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::Rend
 
 void PantallaOpciones::draw(sf::RenderWindow& window) const
 {
-    if (backgroundTexture.getSize().x > 0) {
+    if (backgroundTexture.getSize().x > 0)
+    {
         window.draw(backgroundSprite);
     }
 
-    window.draw(panelInventario);
+
     window.draw(titulo);
     window.draw(mensaje);
     for (int i = 0; i < 2; ++i)
@@ -271,21 +280,20 @@ void PantallaOpciones::draw(sf::RenderWindow& window) const
         window.draw(marcoBotones[i]);
         window.draw(botones[i]);
     }
+    window.draw(panelInventario);
+    window.draw(textoInventario);
+
 }
 
-void PantallaOpciones::cargaPartidas()
+bool PantallaOpciones::cargarPartidaPorId(int idPartida)
 {
-    Partidas partida;
-    int cantidadRegistros=0;
-    /*
-    //cantidadRegistros=partida.Partidas().
-    //ContarRegistros();
 
+    ArchivoBinario<Partidas> archivoPartidasBin(archivoPartidas);
 
-    if (!partida.CargarPartida(cantidadRegistros,*this))
+    if (!archivoPartidasBin.BuscarPorID(idPartida, partidaActual))
     {
-        cout << "Error al cargar la partida";
+        return false;
     }
-    cout << partida.getId();
-    */
+    std::cout << archivoPartidasBin.ContarRegistros();
+    return true;
 }

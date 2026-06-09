@@ -567,9 +567,10 @@
 	"Combate.h"
 	"pantalla_resultado.h"
 
-1781020182 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
+1781044984 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
 	<SFML/Graphics.hpp>
 	<string>
+	<sstream>
 	"pantalla_resultado.h"
 
 1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu_principal.h
@@ -606,10 +607,9 @@
 	<iostream>
 	<sstream>
 
-1781037984 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
+1781045280 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
 	"pantalla_opciones.h"
 	"archivos.h"
-	"exploracion.h"
 	"partidas.h"
 	<algorithm>
 	<iostream>
