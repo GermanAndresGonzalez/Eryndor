@@ -23,6 +23,11 @@ int Partidas::getId() const
     return id;
 }
 
+int Partidas::ContarRegistros() const
+{
+    return id;
+}
+
 int Partidas::getIdPersonaje() const
 {
     return idPersonaje;

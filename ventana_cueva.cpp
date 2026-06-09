@@ -1,4 +1,5 @@
 #include "ventana_cueva.h"
+#include "VentanaConfirmacion.h"
 
 #include <iostream>
 
@@ -7,10 +8,10 @@
 // -----------------------------------------------------------------------------
 
 VentanaCueva::VentanaCueva(const std::string& title,
-                       unsigned int width,
-                       unsigned int height,
-                       const std::string& backgroundTexturePath,
-                       const std::string& soundBufferPath)
+                           unsigned int width,
+                           unsigned int height,
+                           const std::string& backgroundTexturePath,
+                           const std::string& soundBufferPath)
     : backgroundTexturePath(backgroundTexturePath)
     , soundBufferPath(soundBufferPath)
 {
@@ -105,7 +106,13 @@ void VentanaCueva::handleEvents()
     {
         if (event.type == sf::Event::Closed)
         {
-            window.close();
+            VentanaConfirmacion dialogo("", "Deseas volver al menu anterior?");
+            bool respuesta = dialogo.mostrar(window);
+            if (respuesta)
+            {
+                window.close();
+            }
+
         }
 
         if (event.type == sf::Event::Resized)

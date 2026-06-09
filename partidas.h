@@ -18,4 +18,5 @@ public:
 
     bool GuardarPartida(const char* nombreArchivo = "recursos/archivos/partidas.dat");
     bool CargarPartida(int idBuscado, const char* nombreArchivo = "recursos/archivos/partidas.dat");
+    int ContarRegistros() const;
 };

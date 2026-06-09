@@ -1,7 +1,6 @@
-#include "pantalla_jugar.h"
-#include "exploracion.h"
+#include "pantalla_explorar.h"
 
-//#include "combate.h"
+//#include "exploracion.h"
 
 #include <algorithm>
 #include <iostream>
@@ -44,19 +43,19 @@ std::string unirMensajes(const std::string* mensajes, std::size_t cantidad)
 // ---------------------------------------------------------------------------
 // Constructor / destructor
 // ---------------------------------------------------------------------------
-PantallaJugar::PantallaJugar()
+PantallaExplorar::PantallaExplorar()
     : botoneraAcciones(coordenadasAcciones, sf::Color(0, 0, 0, 150), acciones, 3)
 {
     // -- Fuente --------------------------------------------------------------
     if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf"))
     {
-        std::cerr << "PantallaJugar: no se pudo cargar la fuente\n";
+        std::cerr << "PantallaExplorar: no se pudo cargar la fuente\n";
     }
 
     // -- Fondo ---------------------------------------------------------------
     if (!backgroundTexture.loadFromFile("recursos/imag/Cueva/cueva_1280x720.png"))
     {
-        std::cerr << "PantallaJugar: no se pudo cargar el fondo\n";
+        std::cerr << "PantallaExplorar: no se pudo cargar el fondo\n";
     }
     else
     {
@@ -89,9 +88,9 @@ PantallaJugar::PantallaJugar()
     textoJugador.setString("Personaje elegido: Kael Draven");
 
     // -- Paneles -------------------------------------------------------------
-    panelInicial.setFillColor(sf::Color(0, 0, 0, 170));
-    panelInicial.setOutlineThickness(2.f);
-    panelInicial.setOutlineColor(sf::Color::White);
+    panelCombate.setFillColor(sf::Color(0, 0, 0, 170));
+    panelCombate.setOutlineThickness(2.f);
+    panelCombate.setOutlineColor(sf::Color::White);
 
     panelInventario.setFillColor(sf::Color(0, 0, 0, 170));
     panelInventario.setOutlineThickness(2.f);
@@ -103,7 +102,7 @@ PantallaJugar::PantallaJugar()
     posicionarPanelInventario(ultimaVentanaSize);
 }
 
-PantallaJugar::~PantallaJugar()
+PantallaExplorar::~PantallaExplorar()
 {
     // Combate guarda el progreso en su propio destructor.
 }
@@ -111,7 +110,7 @@ PantallaJugar::~PantallaJugar()
 // ---------------------------------------------------------------------------
 // Configuración pública
 // ---------------------------------------------------------------------------
-void PantallaJugar::setJugadorSeleccionado(int id)
+void PantallaExplorar::setJugadorSeleccionado(int id)
 {
     combate.setJugadorSeleccionado(id);
     recargarSpriteJugador();
@@ -127,7 +126,7 @@ void PantallaJugar::setJugadorSeleccionado(int id)
     posicionarPanelInventario(ultimaVentanaSize);
 }
 
-bool PantallaJugar::cargarPartidaPorId(int idPartida)
+bool PantallaExplorar::cargarPartidaPorId(int idPartida)
 {
     if (!combate.cargarPartidaPorId(idPartida))
     {
@@ -146,7 +145,7 @@ bool PantallaJugar::cargarPartidaPorId(int idPartida)
     return true;
 }
 
-bool PantallaJugar::cargarUltimaPartida()
+bool PantallaExplorar::cargarUltimaPartida()
 {
     if (!combate.cargarUltimaPartida())
     {
@@ -167,7 +166,7 @@ bool PantallaJugar::cargarUltimaPartida()
 // ---------------------------------------------------------------------------
 // Ciclo principal
 // ---------------------------------------------------------------------------
-PantallaResultado PantallaJugar::handleEvent(const sf::Event& event,
+PantallaResultado PantallaExplorar::handleEvent(const sf::Event& event,
                                               sf::RenderWindow& window)
 {
     if (event.type == sf::Event::KeyPressed)
@@ -198,7 +197,7 @@ PantallaResultado PantallaJugar::handleEvent(const sf::Event& event,
     return PantallaResultado::Nada;
 }
 
-void PantallaJugar::updateLayout(const sf::RenderWindow& window)
+void PantallaExplorar::updateLayout(const sf::RenderWindow& window)
 {
     ultimaVentanaSize = window.getSize();
 
@@ -225,7 +224,7 @@ void PantallaJugar::updateLayout(const sf::RenderWindow& window)
     actualizarTextosCombate();
 }
 
-void PantallaJugar::draw(sf::RenderWindow& window) const
+void PantallaExplorar::draw(sf::RenderWindow& window) const
 {
     if (backgroundTexture.getSize().x > 0)
     {
@@ -245,7 +244,7 @@ void PantallaJugar::draw(sf::RenderWindow& window) const
         window.draw(enemigoSprite);
     }
 
-    window.draw(panelInicial);
+    window.draw(panelCombate);
     window.draw(textoEstadoHeroe);
     window.draw(textoEstadoEnemigo);
     window.draw(textoLogCombate);
@@ -257,13 +256,13 @@ void PantallaJugar::draw(sf::RenderWindow& window) const
 // ---------------------------------------------------------------------------
 // Acciones de combate (wrappers: lógica → Combate, UI → aquí)
 // ---------------------------------------------------------------------------
-void PantallaJugar::accionAtacar()
+void PantallaExplorar::accionAtacar()
 {
     combate.aplicarAtaqueJugador();
     actualizarTextosCombate();
 }
 
-void PantallaJugar::accionCurar()
+void PantallaExplorar::accionCurar()
 {
     combate.aplicarCuracionJugador();
     actualizarTextosCombate();
@@ -273,7 +272,7 @@ void PantallaJugar::accionCurar()
 // ---------------------------------------------------------------------------
 // Carga de sprites
 // ---------------------------------------------------------------------------
-void PantallaJugar::recargarSpriteJugador()
+void PantallaExplorar::recargarSpriteJugador()
 {
     const char* ruta = (combate.getJugadorSeleccionado() == 2)
         ? "recursos/imag/Jugadores/Cabeza_jugador2.png"
@@ -281,18 +280,18 @@ void PantallaJugar::recargarSpriteJugador()
 
     if (!jugadorTexture.loadFromFile(ruta))
     {
-        std::cerr << "PantallaJugar: no se pudo cargar " << ruta << '\n';
+        std::cerr << "PantallaExplorar: no se pudo cargar " << ruta << '\n';
         return;
     }
     jugadorSprite.setTexture(jugadorTexture, true);
 }
 
-void PantallaJugar::recargarSpriteEnemigo()
+void PantallaExplorar::recargarSpriteEnemigo()
 {
     const char* ruta = combate.getRutaImagenEnemigo();
     if (!enemigoTexture.loadFromFile(ruta))
     {
-        std::cerr << "PantallaJugar: no se pudo cargar " << ruta << '\n';
+        std::cerr << "PantallaExplorar: no se pudo cargar " << ruta << '\n';
         return;
     }
     enemigoSprite.setTexture(enemigoTexture, true);
@@ -302,7 +301,7 @@ void PantallaJugar::recargarSpriteEnemigo()
 // ---------------------------------------------------------------------------
 // Posicionamiento de sprites
 // ---------------------------------------------------------------------------
-void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
+void PantallaExplorar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
 {
     if (jugadorTexture.getSize().x == 0 || enemigoTexture.getSize().x == 0)
     {
@@ -346,7 +345,7 @@ void PantallaJugar::posicionarSpritesCombate(const sf::Vector2u& windowSize)
 // ---------------------------------------------------------------------------
 // Posicionamiento de paneles
 // ---------------------------------------------------------------------------
-void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
+void PantallaExplorar::posicionarPanelCombate(const sf::Vector2u& windowSize)
 {
     const float panelAncho    = static_cast<float>(windowSize.x) - 160.f;
     const float panelAlto     = 190.f;
@@ -359,8 +358,8 @@ void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
         panelY = limiteInferior;
     }
 
-    panelInicial.setPosition(80.f, panelY);
-    panelInicial.setSize(sf::Vector2f(panelAncho, panelAlto));
+    panelCombate.setPosition(80.f, panelY);
+    panelCombate.setSize(sf::Vector2f(panelAncho, panelAlto));
 
     textoEstadoHeroe.setPosition  (96.f, panelY + 12.f);
     textoEstadoEnemigo.setPosition(96.f, panelY + 38.f);
@@ -369,7 +368,7 @@ void PantallaJugar::posicionarPanelCombate(const sf::Vector2u& windowSize)
     alinearTextoControles();
 }
 
-void PantallaJugar::posicionarPanelInventario(const sf::Vector2u& windowSize)
+void PantallaExplorar::posicionarPanelInventario(const sf::Vector2u& windowSize)
 {
     const float panelAncho = 320.f;
     const float panelAlto  = 160.f;
@@ -381,10 +380,10 @@ void PantallaJugar::posicionarPanelInventario(const sf::Vector2u& windowSize)
     textoInventario.setPosition(panelX + 20.f, panelY + 18.f);
 }
 
-void PantallaJugar::alinearTextoControles()
+void PantallaExplorar::alinearTextoControles()
 {
-    const auto panelPos  = panelInicial.getPosition();
-    const auto panelSize = panelInicial.getSize();
+    const auto panelPos  = panelCombate.getPosition();
+    const auto panelSize = panelCombate.getSize();
     const auto bounds    = textoControles.getLocalBounds();
 
     textoControles.setOrigin(bounds.left + bounds.width, bounds.top);
@@ -395,13 +394,13 @@ void PantallaJugar::alinearTextoControles()
 // ---------------------------------------------------------------------------
 // Actualización de textos de UI
 // ---------------------------------------------------------------------------
-void PantallaJugar::actualizarTextoJugador()
+void PantallaExplorar::actualizarTextoJugador()
 {
     textoJugador.setString(
         std::string("Personaje elegido: ") + combate.getNombreJugador());
 }
 
-void PantallaJugar::actualizarTextosCombate()
+void PantallaExplorar::actualizarTextosCombate()
 {
     const Personaje* heroe   = combate.getHeroe();
     const Enemigos*  enemigo = combate.getEnemigo();
@@ -440,7 +439,7 @@ void PantallaJugar::actualizarTextosCombate()
     alinearTextoControles();
 }
 
-void PantallaJugar::actualizarTextoInventario()
+void PantallaExplorar::actualizarTextoInventario()
 {
     // IDs e ítems visibles en el panel de inventario
     struct EntradaVisible { int id; const char* etiqueta; };

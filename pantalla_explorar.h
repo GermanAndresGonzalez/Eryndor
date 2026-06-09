@@ -8,19 +8,19 @@
 #include "pantalla_resultado.h"
 
 // ---------------------------------------------------------------------------
-// PantallaJugar
+// PantallaExplorar
 // Responsabilidad: presentación gráfica del combate.
 // Toda la lógica de combate (turnos, daño, inventario, persistencia) vive
-// en la clase Combate, que PantallaJugar posee como miembro.
+// en la clase Combate, que PantallaExplorar posee como miembro.
 // ---------------------------------------------------------------------------
-class PantallaJugar
+class PantallaExplorar
 {
 public:
-    PantallaJugar();
-    ~PantallaJugar();
+    PantallaExplorar();
+    ~PantallaExplorar();
 
-    PantallaJugar(const PantallaJugar&)            = delete;
-    PantallaJugar& operator=(const PantallaJugar&) = delete;
+    PantallaExplorar(const PantallaExplorar&)            = delete;
+    PantallaExplorar& operator=(const PantallaExplorar&) = delete;
 
     // -----------------------------------------------------------------------
     // Interfaz pública (igual que antes)
@@ -77,7 +77,7 @@ private:
     sf::Text textoControles;
     sf::Text textoInventario;
 
-    sf::RectangleShape panelInicial;
+    sf::RectangleShape panelCombate;
     sf::RectangleShape panelInventario;
 
     Botonera botoneraAcciones;

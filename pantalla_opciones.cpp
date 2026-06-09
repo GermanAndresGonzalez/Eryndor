@@ -1,10 +1,14 @@
 #include "pantalla_opciones.h"
 
 #include "archivos.h"
+
+#include "exploracion.h"
+
 #include "partidas.h"
 
 #include <algorithm>
 #include <iostream>
+#include <sstream>
 
 PantallaOpciones::PantallaOpciones()
 {
@@ -17,6 +21,16 @@ PantallaOpciones::PantallaOpciones()
     } else {
         backgroundSprite.setTexture(backgroundTexture);
     }
+    auto configurarTexto = [&](sf::Text& t, unsigned int size)
+    {
+        t.setFont(font);
+        t.setCharacterSize(size);
+        t.setFillColor(sf::Color::White);
+        t.setOutlineColor(sf::Color::Black);
+        t.setOutlineThickness(1.f);
+    };
+
+    configurarTexto(textoInventario,    18);
 
     titulo.setFont(font);
     titulo.setString("Opciones de partida");
@@ -25,12 +39,18 @@ PantallaOpciones::PantallaOpciones()
     titulo.setOutlineColor(sf::Color::Black);
     titulo.setOutlineThickness(2.f);
 
+    panelInventario.setFillColor(sf::Color(0, 0, 0, 170));
+    panelInventario.setOutlineThickness(2.f);
+    panelInventario.setOutlineColor(sf::Color::White);
+
     mensaje.setFont(font);
     mensaje.setString("Presiona C para cargar la partida guardada o V para volver.");
     mensaje.setCharacterSize(24);
     mensaje.setFillColor(sf::Color::White);
     mensaje.setOutlineColor(sf::Color::Black);
     mensaje.setOutlineThickness(1.f);
+
+
 
     const std::string etiquetas[] = {"Cargar partida", "Volver"};
     for (int i = 0; i < 2; ++i)
@@ -48,6 +68,7 @@ PantallaOpciones::PantallaOpciones()
     }
 
     posicionarElementos(sf::Vector2u{1280u, 720u});
+    posicionarPanelInventario(sf::Vector2u{1280u, 720u});
 }
 
 void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
@@ -61,7 +82,63 @@ void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
     }
 
     posicionarElementos(window.getSize());
+    posicionarPanelInventario(window.getSize());
+
 }
+
+
+void PantallaOpciones::posicionarPanelInventario(const sf::Vector2u& windowSize)
+{
+    const float panelAncho = 320.f;
+    const float panelAlto  = 160.f;
+    const float panelX     = 80.f;
+    const float panelY     = static_cast<float>(windowSize.y) / 2.f - panelAlto / 2.f - 60.f;
+
+    panelInventario.setPosition(panelX, panelY);
+    panelInventario.setSize(sf::Vector2f(panelAncho, panelAlto));
+    textoInventario.setPosition(panelX + 20.f, panelY + 18.f);
+}
+
+void PantallaOpciones::actualizarTextoInventario()
+{
+    Exploracion exploracion;
+    // IDs e ítems visibles en el panel de inventario
+    struct EntradaVisible { int id; const char* etiqueta; };
+    static const EntradaVisible entradas[] =
+    {
+        {1, "Curas"},
+        {4, "Daga"},
+        {2, "Espada"},
+        {5, "Armadura comun"},
+        {6, "Armadura especial"}
+    };
+
+    std::ostringstream salida;
+    salida << "Inventario de partidas:";
+
+    for (const auto& e : entradas)
+    {
+        salida << '\n' << e.etiqueta << ": "
+               << exploracion.getInventario().obtenerCantidad(e.id);
+    }
+
+    textoInventario.setString(salida.str());
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void PantallaOpciones::posicionarElementos(const sf::Vector2u& windowSize)
 {
@@ -71,6 +148,8 @@ void PantallaOpciones::posicionarElementos(const sf::Vector2u& windowSize)
 
     titulo.setPosition(60.f, 40.f);
     mensaje.setPosition(60.f, 110.f);
+
+
 
     for (int i = 0; i < 2; ++i)
     {
@@ -184,6 +263,7 @@ void PantallaOpciones::draw(sf::RenderWindow& window) const
         window.draw(backgroundSprite);
     }
 
+    window.draw(panelInventario);
     window.draw(titulo);
     window.draw(mensaje);
     for (int i = 0; i < 2; ++i)
@@ -191,4 +271,21 @@ void PantallaOpciones::draw(sf::RenderWindow& window) const
         window.draw(marcoBotones[i]);
         window.draw(botones[i]);
     }
+}
+
+void PantallaOpciones::cargaPartidas()
+{
+    Partidas partida;
+    int cantidadRegistros=0;
+    /*
+    //cantidadRegistros=partida.Partidas().
+    //ContarRegistros();
+
+
+    if (!partida.CargarPartida(cantidadRegistros,*this))
+    {
+        cout << "Error al cargar la partida";
+    }
+    cout << partida.getId();
+    */
 }

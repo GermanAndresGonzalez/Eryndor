@@ -40,6 +40,12 @@
 			<Add library="sfml-system" />
 			<Add directory="SFML/lib" />
 		</Linker>
+		<Unit filename="VentanaConfirmacion.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="VentanaConfirmacion.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
 		<Unit filename="archivos.cpp">
 			<Option virtualFolder="Archivos/" />
 		</Unit>
@@ -69,6 +75,12 @@
 		</Unit>
 		<Unit filename="escena_menu.h">
 			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="exploracion.cpp">
+			<Option virtualFolder="Acciones/Sources/" />
+		</Unit>
+		<Unit filename="exploracion.h">
+			<Option virtualFolder="Acciones/Headers/" />
 		</Unit>
 		<Unit filename="inventario.cpp">
 			<Option virtualFolder="Sistema de Items/Sources/" />
@@ -105,6 +117,18 @@
 			<Option virtualFolder="Pantallas/Sources/" />
 		</Unit>
 		<Unit filename="pantalla_acerca.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_combate.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_combate.h">
+			<Option virtualFolder="Pantallas/Headers/" />
+		</Unit>
+		<Unit filename="pantalla_explorar.cpp">
+			<Option virtualFolder="Pantallas/Sources/" />
+		</Unit>
+		<Unit filename="pantalla_explorar.h">
 			<Option virtualFolder="Pantallas/Headers/" />
 		</Unit>
 		<Unit filename="pantalla_jugar.cpp">
