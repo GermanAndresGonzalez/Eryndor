@@ -5,6 +5,7 @@
 
 
 #include <algorithm>
+#include <cstring>
 #include <iostream>
 #include <sstream>
 
@@ -80,6 +81,12 @@ PantallaOpciones::PantallaOpciones()
     actualizarTextoInventario();
 }
 
+PantallaOpciones::~PantallaOpciones()
+{
+    delete[] botonesPartidas;
+    delete[] textoBotonesPartidas;
+}
+
 void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
 {
     if (backgroundTexture.getSize().x > 0 && backgroundTexture.getSize().y > 0)
@@ -114,8 +121,6 @@ void PantallaOpciones::actualizarTextoInventario()
 {
     std::ostringstream salida;
 
-
-
     ArchivoBinario<Partidas> archivoPartidasBin(archivoPartidas);
 
     int cantRegistros=archivoPartidasBin.ContarRegistros();
@@ -126,15 +131,37 @@ void PantallaOpciones::actualizarTextoInventario()
     }
     else
     {
+
         salida << "Ultimas " << cantRegistros << " partidas:\n";
+        textoInventario.setString(salida.str());
         int limite =(cantRegistros>10) ? cantRegistros-10:0;
+
+        intCantBotones=(cantRegistros>10) ? 10:cantRegistros;
+        botonesPartidas = new sf::RectangleShape[intCantBotones];
+        textoBotonesPartidas = new sf::Text[intCantBotones];
+
+        if (botonesPartidas==nullptr)
+        {
+            exit(0);
+        }
         Partidas partida;
         for (int i = cantRegistros - 1; i >= limite; i--)
         {
             if (archivoPartidasBin.BuscarPorID(i, partida))
-                if (!partida.estaEliminada())
+                //if (!partida.estaEliminada())
                 {
-                    salida << "Numero de partida: " << partida.getId() << "\n";
+                    botonesPartidas[i].setSize(sf::Vector2f(150,50));
+                    botonesPartidas[i].setFillColor(sf::Color(0, 0, 0, 150));
+                    botonesPartidas[i].setPosition(100.f, 100.f + i * 70.f);
+
+                    textoBotonesPartidas[i].setFont(font);
+                    textoBotonesPartidas[i].setCharacterSize(20);
+                    textoBotonesPartidas[i].setFillColor(sf::Color::White);
+                    std::string textoPartida= "Partida #" + std::to_string(partida.getId());
+                    textoBotonesPartidas[i].setString(textoPartida);
+
+
+                    //salida << "Numero de partida: " << partida.getId() << "\n";
                 }
         }
     }
@@ -143,7 +170,7 @@ void PantallaOpciones::actualizarTextoInventario()
     //salida << "\n " << "Cantidad de registros: " << archivoPartidasBin.ContarRegistros() << "\n";
 
 
-    textoInventario.setString(salida.str());
+
 
 }
 
@@ -282,6 +309,11 @@ void PantallaOpciones::draw(sf::RenderWindow& window) const
     }
     window.draw(panelInventario);
     window.draw(textoInventario);
+    for (int i = 0; i < intCantBotones; i++)
+    {
+        window.draw(botonesPartidas[i]);
+        window.draw(textoBotonesPartidas[i]);
+    }
 
 }
 

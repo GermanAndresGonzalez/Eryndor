@@ -17,12 +17,13 @@ public:
     bool cargarPartidaPorId(int idPartida);
 
 private:
-
+    int intCantBotones;
     void posicionarElementos(const sf::Vector2u& windowSize);
     void posicionarPanelInventario(const sf::Vector2u& windowSize);
     void resaltarBoton(int indice);
     void actualizarTextoInventario();
-    sf::RectangleShape* marcoBotonesPartidas;
+    sf::RectangleShape* botonesPartidas;
+    sf::Text* textoBotonesPartidas;
 
 
     sf::Texture backgroundTexture;
