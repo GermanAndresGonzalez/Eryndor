@@ -21,9 +21,11 @@ private:
     void posicionarElementos(const sf::Vector2u& windowSize);
     void posicionarPanelInventario(const sf::Vector2u& windowSize);
     void resaltarBoton(int indice);
+    void resaltarBotonPartida(int indice);
     void actualizarTextoInventario();
-    sf::RectangleShape* botonesPartidas;
-    sf::Text* textoBotonesPartidas;
+    sf::RectangleShape* botonesPartidas=nullptr;
+    sf::Text* textoBotonesPartidas=nullptr;
+    int* idPartidasCarga=nullptr;
 
 
     sf::Texture backgroundTexture;

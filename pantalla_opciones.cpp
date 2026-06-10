@@ -53,7 +53,7 @@ PantallaOpciones::PantallaOpciones()
     panelInventario.setOutlineColor(sf::Color::White);
 
     mensaje.setFont(font);
-    mensaje.setString("Presiona C para cargar la partida guardada o V para volver.");
+    //mensaje.setString("Presiona C para cargar la partida guardada o V para volver.");
     mensaje.setCharacterSize(24);
     mensaje.setFillColor(sf::Color::White);
     mensaje.setOutlineColor(sf::Color::Black);
@@ -85,6 +85,7 @@ PantallaOpciones::~PantallaOpciones()
 {
     delete[] botonesPartidas;
     delete[] textoBotonesPartidas;
+    delete[] idPartidasCarga;
 }
 
 void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
@@ -108,9 +109,9 @@ void PantallaOpciones::updateLayout(const sf::RenderWindow& window)
 void PantallaOpciones::posicionarPanelInventario(const sf::Vector2u& windowSize)
 {
     const float panelAncho = 320.f;
-    const float panelAlto  = 260.f;
-    const float panelX     = 80.f;
-    const float panelY     = static_cast<float>(windowSize.y) / 2.f - panelAlto / 2.f - 60.f;
+    const float panelAlto  = 450.f;
+    const float panelX     = 230.f;
+    const float panelY     = static_cast<float>(windowSize.y) / 2.f - panelAlto / 2.f - 0.f;
 
     panelInventario.setPosition(panelX, panelY);
     panelInventario.setSize(sf::Vector2f(panelAncho, panelAlto));
@@ -119,65 +120,70 @@ void PantallaOpciones::posicionarPanelInventario(const sf::Vector2u& windowSize)
 
 void PantallaOpciones::actualizarTextoInventario()
 {
-    std::ostringstream salida;
+    // Liberar arrays anteriores para evitar memory leak
+
+    delete[] botonesPartidas;
+    delete[] textoBotonesPartidas;
+    delete[] idPartidasCarga;
+    botonesPartidas = nullptr;
+    textoBotonesPartidas = nullptr;
+    intCantBotones = 0;
 
     ArchivoBinario<Partidas> archivoPartidasBin(archivoPartidas);
+    int cantRegistros = archivoPartidasBin.ContarRegistros();
 
-    int cantRegistros=archivoPartidasBin.ContarRegistros();
     if (cantRegistros == 0)
     {
-        salida << "No hay partidas encontradas.";
+        textoInventario.setString("No hay partidas encontradas.");
         return;
     }
-    else
+
+    intCantBotones = (cantRegistros > 10) ? 10 : cantRegistros;
+    botonesPartidas      = new sf::RectangleShape[intCantBotones];
+    textoBotonesPartidas = new sf::Text[intCantBotones];
+    idPartidasCarga = new int[intCantBotones];
+
+    // posInicio: primera posición a leer (las últimas intCantBotones)
+    int posInicio = cantRegistros - intCantBotones;
+
+    std::ostringstream salida;
+    salida << "Ultimas " << intCantBotones << " partidas:\n";
+    textoInventario.setString(salida.str());
+
+    Partidas partida;
+    for (int i = 0; i < intCantBotones; i++)
     {
+        int posReal = posInicio + i;
 
-        salida << "Ultimas " << cantRegistros << " partidas:\n";
-        textoInventario.setString(salida.str());
-        int limite =(cantRegistros>10) ? cantRegistros-10:0;
+        botonesPartidas[i].setSize(sf::Vector2f(180.f, 30.f));
+        //botonesPartidas[i].setFillColor(sf::Color(0, 0, 0, 150));
+        botonesPartidas[i].setFillColor(sf::Color::Transparent);
+        botonesPartidas[i].setPosition(260.f, 205.f + i * 35.f);
 
-        intCantBotones=(cantRegistros>10) ? 10:cantRegistros;
-        botonesPartidas = new sf::RectangleShape[intCantBotones];
-        textoBotonesPartidas = new sf::Text[intCantBotones];
+        textoBotonesPartidas[i].setFont(font);          // primero la fuente
+        textoBotonesPartidas[i].setCharacterSize(20);
+        textoBotonesPartidas[i].setFillColor(sf::Color::White);
+        textoBotonesPartidas[i].setPosition(260.f, 205.f + i * 35.f);  // luego posición
 
-        if (botonesPartidas==nullptr)
+        if (archivoPartidasBin.Leer(posReal, partida) && !partida.estaEliminada())
         {
-            exit(0);
+            textoBotonesPartidas[i].setString("Partida #" + std::to_string(partida.getId()));
+            idPartidasCarga[i]=partida.getId();
         }
-        Partidas partida;
-        for (int i = cantRegistros - 1; i >= limite; i--)
+        else
         {
-            if (archivoPartidasBin.BuscarPorID(i, partida))
-                //if (!partida.estaEliminada())
-                {
-                    botonesPartidas[i].setSize(sf::Vector2f(150,50));
-                    botonesPartidas[i].setFillColor(sf::Color(0, 0, 0, 150));
-                    botonesPartidas[i].setPosition(100.f, 100.f + i * 70.f);
-
-                    textoBotonesPartidas[i].setFont(font);
-                    textoBotonesPartidas[i].setCharacterSize(20);
-                    textoBotonesPartidas[i].setFillColor(sf::Color::White);
-                    std::string textoPartida= "Partida #" + std::to_string(partida.getId());
-                    textoBotonesPartidas[i].setString(textoPartida);
-
-
-                    //salida << "Numero de partida: " << partida.getId() << "\n";
-                }
+            textoBotonesPartidas[i].setString("(eliminada)");
+            idPartidasCarga[i]=cantRegistros;
         }
+
     }
-
-
-    //salida << "\n " << "Cantidad de registros: " << archivoPartidasBin.ContarRegistros() << "\n";
-
-
-
-
 }
+
 
 
 void PantallaOpciones::posicionarElementos(const sf::Vector2u& windowSize)
 {
-    const float botonX = static_cast<float>(windowSize.x) / 2.f - 120.f;
+    const float botonX = static_cast<float>(windowSize.x) / 2.f + 150.f;
     const float botonY = 230.f;
     const float separacion = 75.f;
 
@@ -200,6 +206,11 @@ void PantallaOpciones::posicionarElementos(const sf::Vector2u& windowSize)
 
 void PantallaOpciones::resaltarBoton(int indice)
 {
+    for (int i=0;i<intCantBotones;i++)
+    {
+        textoBotonesPartidas[i].setFillColor(sf::Color::White);
+        botonesPartidas[i].setFillColor(sf::Color::Transparent);
+    }
     botonSeleccionado = indice;
     botones[0].setFillColor(sf::Color::White);
     botones[1].setFillColor(sf::Color::White);
@@ -208,6 +219,28 @@ void PantallaOpciones::resaltarBoton(int indice)
         botones[indice].setFillColor(sf::Color(120, 200, 255));
     }
 }
+
+void PantallaOpciones::resaltarBotonPartida(int indice)
+{
+    botones[0].setFillColor(sf::Color::White);
+    botones[1].setFillColor(sf::Color::White);
+    botonSeleccionado = indice;
+    for (int i=0;i<intCantBotones;i++)
+    {
+        textoBotonesPartidas[i].setFillColor(sf::Color::White);
+        botonesPartidas[i].setFillColor(sf::Color::Transparent);
+
+    }
+
+    if (indice >= 0 && indice < intCantBotones)
+    {
+        textoBotonesPartidas[indice].setFillColor(sf::Color(120, 200, 255));
+        botonesPartidas[indice].setFillColor(sf::Color::White);
+    }
+}
+
+
+
 
 PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::RenderWindow&)
 {
@@ -220,6 +253,16 @@ PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::Rend
                 resaltarBoton(i);
                 break;
             }
+
+        }
+        for (int i = 0; i < intCantBotones; ++i)
+        {
+            if (botonesPartidas[i].getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)))
+            {
+                resaltarBotonPartida(i);
+                break;
+            }
+
         }
     }
 
@@ -235,7 +278,8 @@ PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::Rend
 
                 if (i == 0)
                 {
-                    ArchivoBinario<Partidas> archivoPartidas("recursos/archivos/partidas.dat");
+                    /*
+                    ArchivoBinario<Partidas> archivoPartidas(archivoPartidas);
                     if (archivoPartidas.ContarRegistros() == 0)
                     {
                         mensaje.setString("No hay partida guardada.");
@@ -243,18 +287,30 @@ PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::Rend
                     }
 
                     return PantallaResultado::CargarPartida;
+                    */
                 }
-
-                return PantallaResultado::VolverMenu;
+                return PantallaResultado::CargarPartida;
+                //return PantallaResultado::VolverMenu;
             }
         }
+
+        for (int i = 0; i < intCantBotones; ++i)
+        {
+            if (botonesPartidas[i].getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)))
+            {
+                return PantallaResultado::VolverMenu;
+                //return PantallaResultado::VolverMenu;
+            }
+
+        }
+
     }
 
     if (event.type == sf::Event::KeyPressed)
     {
         if (event.key.code == sf::Keyboard::C)
         {
-            ArchivoBinario<Partidas> archivoPartidas("recursos/archivos/partidas.dat");
+            ArchivoBinario<Partidas> archivoPartidas(archivoPartidas);
             if (archivoPartidas.ContarRegistros() == 0)
             {
                 mensaje.setString("No hay partida guardada.");
@@ -275,7 +331,7 @@ PantallaResultado PantallaOpciones::handleEvent(const sf::Event& event, sf::Rend
         {
             if (botonSeleccionado == 0)
             {
-                ArchivoBinario<Partidas> archivoPartidas("recursos/archivos/partidas.dat");
+                ArchivoBinario<Partidas> archivoPartidas(archivoPartidas);
                 if (archivoPartidas.ContarRegistros() == 0)
                 {
                     mensaje.setString("No hay partida guardada.");

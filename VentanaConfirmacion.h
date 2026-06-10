@@ -7,6 +7,7 @@ public:
 
     // Devuelve true si el usuario presiona "Sí", false si "No" o cierra
     bool mostrar(sf::RenderWindow& window);
+    void resaltarBoton(int i);
 
 private:
     sf::Texture fondoTexture;

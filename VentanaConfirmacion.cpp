@@ -41,6 +41,8 @@ VentanaConfirmacion::VentanaConfirmacion(const std::string& titulo, const std::s
     botonSi.setSize(sf::Vector2f(120.f, 50.f));
 
     botonSi.setFillColor(sf::Color(50, 58, 122));
+    botonSi.setOutlineColor(sf::Color(50, 58, 122));
+    botonSi.setOutlineThickness(2.f);
 
     botonSi.setPosition(fondo.getPosition().x + 100.f, fondo.getPosition().y + 200.f);
 
@@ -48,12 +50,15 @@ VentanaConfirmacion::VentanaConfirmacion(const std::string& titulo, const std::s
     textoSi.setString("Si");
     textoSi.setCharacterSize(22);
     textoSi.setFillColor(sf::Color::White);
+
     centrarTexto(textoSi, botonSi);
 
     // Botón No
     botonNo.setSize(sf::Vector2f(120.f, 50.f));
 
     botonNo.setFillColor(sf::Color(50, 58, 122));
+    botonNo.setOutlineColor(sf::Color(50, 58, 122));
+    botonNo.setOutlineThickness(2.f);
     botonNo.setPosition(fondo.getPosition().x + 380.f, fondo.getPosition().y + 200.f);
 
     textoNo.setFont(font);
@@ -106,6 +111,20 @@ bool VentanaConfirmacion::mostrar(sf::RenderWindow& window)
                     return false; // ❌ No
                 }
             }
+            if (event.type == sf::Event::MouseMoved)
+            {
+                if (botonNo.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)))
+                {
+                    resaltarBoton(2);
+                    break;
+                }
+                if (botonSi.getGlobalBounds().contains(static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)))
+                {
+                    resaltarBoton(1);
+                    break;
+                }
+            }
+
         }
 
         // Dibujar overlay encima de la ventana principal
@@ -121,4 +140,19 @@ bool VentanaConfirmacion::mostrar(sf::RenderWindow& window)
         window.display();
     }
     return false;
+}
+
+void VentanaConfirmacion::resaltarBoton(int i)
+{
+    switch (i)
+    {
+    case 1:
+        botonSi.setOutlineColor(sf::Color::White);
+        botonNo.setOutlineColor(sf::Color(50, 58, 122));
+        break;
+    case 2:
+        botonNo.setOutlineColor(sf::Color::White);
+        botonSi.setOutlineColor(sf::Color(50, 58, 122));
+        break;
+    }
 }

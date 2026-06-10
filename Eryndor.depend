@@ -567,7 +567,7 @@
 	"Combate.h"
 	"pantalla_resultado.h"
 
-1781048770 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
+1781051183 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
 	<SFML/Graphics.hpp>
 	<string>
 	<sstream>
@@ -607,7 +607,7 @@
 	<iostream>
 	<sstream>
 
-1781048876 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
+1781063473 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
 	"pantalla_opciones.h"
 	"archivos.h"
 	"partidas.h"
@@ -693,10 +693,10 @@
 	"partidas.h"
 	"personaje.h"
 
-1780863127 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.h
+1781061452 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.h
 	<SFML/Graphics.hpp>
 
-1780864084 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.cpp
+1781062607 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.cpp
 	"VentanaConfirmacion.h"
 	<iostream>
 
