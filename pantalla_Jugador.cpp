@@ -1,7 +1,9 @@
 #include "pantalla_Jugador.h"
+#include "VentanaConfirmacion.h"
 
 #include <algorithm>
 #include <iostream>
+
 
 namespace
 {
@@ -18,15 +20,29 @@ void centrarTexto(sf::Text& texto)
 
 PantallaJugador::PantallaJugador()
 {
-    if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf")) {
+    if (!fondoTexture.loadFromFile("recursos/imag/Cueva/cueva_1280x720.png"))
+    {
+        std::cerr << "PantallaJugar: no se pudo cargar el fondo\n";
+    }
+    else
+    {
+        fondoSprite.setTexture(fondoTexture);
+    }
+
+
+
+    if (!font.loadFromFile("recursos/fuentes/AlexandriaFLF-Bold.ttf"))
+    {
         std::cerr << "PantallaJugador: no se pudo cargar la fuente\n";
     }
 
-    if (!texturaJugador1.loadFromFile("recursos/imag/Jugadores/Cabeza_jugador1.png")) {
+    if (!texturaJugador1.loadFromFile("recursos/imag/Jugadores/Cabeza_jugador1.png"))
+    {
         std::cerr << "PantallaJugador: no se pudo cargar Cabeza_jugador1.png\n";
     }
 
-    if (!texturaJugador2.loadFromFile("recursos/imag/Jugadores/Cabeza_jugador2.png")) {
+    if (!texturaJugador2.loadFromFile("recursos/imag/Jugadores/Cabeza_jugador2.png"))
+    {
         std::cerr << "PantallaJugador: no se pudo cargar Cabeza_jugador2.png\n";
     }
 
@@ -92,7 +108,8 @@ void PantallaJugador::ubicarElementos(const sf::Vector2u& windowSize)
 
     auto prepararSprite = [&](sf::Sprite& sprite, sf::RectangleShape& marco, const sf::Texture& textura) -> sf::Vector2f
     {
-        if (textura.getSize().x == 0 || textura.getSize().y == 0) {
+        if (textura.getSize().x == 0 || textura.getSize().y == 0)
+        {
             sprite.setScale(1.f, 1.f);
             sprite.setPosition(0.f, fotosY);
             marco.setPosition(0.f, fotosY);
@@ -143,25 +160,37 @@ void PantallaJugador::actualizarHover(const sf::Vector2f& mousePos)
 
 PantallaResultado PantallaJugador::handleEvent(const sf::Event& event, sf::RenderWindow& window)
 {
-    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape) {
-        limpiarSeleccion();
-        return PantallaResultado::VolverMenu;
+
+    bool respuesta;
+    if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+    {
+        VentanaConfirmacion dialogo("", "Deseas volver al menu anterior?");
+        bool respuesta = dialogo.mostrar(window);
+        if (respuesta)
+        {
+            limpiarSeleccion();
+            return PantallaResultado::VolverMenu;
+        }
     }
 
-    if (event.type == sf::Event::MouseMoved) {
+    if (event.type == sf::Event::MouseMoved)
+    {
         actualizarHover(window.mapPixelToCoords({event.mouseMove.x, event.mouseMove.y}));
     }
 
-    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+    if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+    {
         const auto mousePos = window.mapPixelToCoords({event.mouseButton.x, event.mouseButton.y});
 
-        if (spriteJugador1.getGlobalBounds().contains(mousePos)) {
+        if (spriteJugador1.getGlobalBounds().contains(mousePos))
+        {
             jugadorSeleccionado = 1;
             actualizarHover(mousePos);
             return PantallaResultado::SeleccionHecha;
         }
 
-        if (spriteJugador2.getGlobalBounds().contains(mousePos)) {
+        if (spriteJugador2.getGlobalBounds().contains(mousePos))
+        {
             jugadorSeleccionado = 2;
             actualizarHover(mousePos);
             return PantallaResultado::SeleccionHecha;
@@ -174,10 +203,12 @@ PantallaResultado PantallaJugador::handleEvent(const sf::Event& event, sf::Rende
 void PantallaJugador::updateLayout(const sf::RenderWindow& window)
 {
     ubicarElementos(window.getSize());
+
 }
 
 void PantallaJugador::draw(sf::RenderWindow& window) const
 {
+    window.draw(fondoSprite);
     window.draw(titulo);
     window.draw(textoSalir);
     window.draw(spriteJugador1);

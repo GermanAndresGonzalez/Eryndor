@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1779829574 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\main.cpp
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\main.cpp
 	"principal.h"
 	"escena_menu.h"
 
@@ -524,152 +524,221 @@
 1779500334 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menuprincipal.cpp
 	"MenuPrincipal.h"
 
-1779991589 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\botonera.cpp
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\botonera.cpp
 	"botonera.h"
 	<algorithm>
 	<iostream>
 
-1779991589 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\botonera.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\botonera.h
 	<SFML/Graphics.hpp>
 	<cstddef>
 	<string>
 
-1780603955 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.cpp
+1781015962 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.cpp
 	"escena_menu.h"
+	"VentanaConfirmacion.h"
 	<iostream>
 
-1780603955 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.h
+1781015837 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\escena_menu.h
 	"ventana_cueva.h"
 	"pantalla_acerca.h"
 	"pantalla_Jugador.h"
 	"pantalla_jugar.h"
 	"pantalla_opciones.h"
 	"menu_principal.h"
+	"pantalla_explorar.h"
+	"pantalla_combate.h"
 
-1779828579 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventana_cueva.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventana_cueva.h
 	<SFML/Audio.hpp>
 	<SFML/Graphics.hpp>
 	<string>
 
-1779829574 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_acerca.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_acerca.h
 	<SFML/Graphics.hpp>
 	"pantalla_resultado.h"
 
-1780603955 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_resultado.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_resultado.h
 
-1780603955 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.h
+1781017815 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.h
 	<SFML/Graphics.hpp>
 	<string>
 	"botonera.h"
-	"Enemigos.h"
-	"inventario.h"
-	"item.h"
-	"partidas.h"
-	"personaje.h"
+	"Combate.h"
 	"pantalla_resultado.h"
 
-1780603955 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
+1781051183 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.h
 	<SFML/Graphics.hpp>
 	<string>
+	<sstream>
 	"pantalla_resultado.h"
 
-1779603330 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu_principal.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu_principal.h
 	"menu.h"
 
-1780004595 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu.h
 	<SFML/Audio.hpp>
 	<SFML/Graphics.hpp>
 	<cstddef>
 	<string>
 
-1779838156 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\principal.h
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\principal.h
 	"ventana_cueva.h"
 	"botonera.h"
 	"menu_principal.h"
 	"principal.h"
 
-1780004595 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu.cpp
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu.cpp
 	"menu.h"
 	<iostream>
 
-1779826813 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu_principal.cpp
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\menu_principal.cpp
 	"menu_principal.h"
 	<iostream>
 
-1779841097 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_acerca.cpp
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_acerca.cpp
 	"pantalla_acerca.h"
 	<iostream>
 
-1780603955 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
+1781017880 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugar.cpp
 	"pantalla_jugar.h"
+	"exploracion.h"
+	<algorithm>
+	<iostream>
+	<sstream>
+
+1781063473 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
+	"pantalla_opciones.h"
+	"archivos.h"
+	"partidas.h"
+	<algorithm>
+	<cstring>
+	<iostream>
+	<sstream>
+
+1780865786 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\principal.cpp
+	"principal.h"
+	"VentanaConfirmacion.h"
+	<iostream>
+
+1780865247 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventana_cueva.cpp
+	"ventana_cueva.h"
+	"VentanaConfirmacion.h"
+	<iostream>
+
+1780864130 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.h
+	<SFML/Graphics.hpp>
+	"pantalla_resultado.h"
+
+1780864226 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.cpp
+	"pantalla_Jugador.h"
+	"VentanaConfirmacion.h"
+	<algorithm>
+	<iostream>
+
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.cpp
+	"personaje.h"
+	<cstring>
+
+1780604629 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\enemigos.cpp
+	<cstring>
+	<iostream>
+	"Enemigos.h"
+
+1780604629 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\enemigos.h
+	<cstddef>
+
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.h
+	"item.h"
+
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\inventario.cpp
+	<iostream>
+	"inventario.h"
+
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\inventario.h
+	"archivos.h"
+
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\item.cpp
+	<cstring>
+	"item.h"
+
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\item.h
+
+1780604630 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\archivos.cpp
+	"archivos.h"
+
+1780604630 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\archivos.h
+	<cstdio>
+	<string>
+
+1781020678 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\partidas.cpp
+	"partidas.h"
+	"archivos.h"
+
+1781037824 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\partidas.h
+
+1780749886 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\combate.cpp
+	"Combate.h"
 	"archivos.h"
 	<algorithm>
 	<iostream>
 	<random>
 	<sstream>
 
-1780603955 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_opciones.cpp
-	"pantalla_opciones.h"
-	"archivos.h"
+1780749877 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\combate.h
+	<string>
+	"Enemigos.h"
+	"inventario.h"
+	"item.h"
 	"partidas.h"
+	"personaje.h"
+
+1781061452 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.h
+	<SFML/Graphics.hpp>
+
+1781062607 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventanaconfirmacion.cpp
+	"VentanaConfirmacion.h"
+	<iostream>
+
+1781013547 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_combate.cpp
+	"pantalla_combate.h"
 	<algorithm>
 	<iostream>
+	<sstream>
 
-1779991375 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\principal.cpp
-	"principal.h"
+1781016020 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_explorar.cpp
+	"pantalla_explorar.h"
+	<algorithm>
 	<iostream>
+	<sstream>
 
-1779834290 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\ventana_cueva.cpp
-	"ventana_cueva.h"
-	<iostream>
-
-1779998732 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.h
+1781013456 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_combate.h
 	<SFML/Graphics.hpp>
+	<string>
+	"botonera.h"
+	"Combate.h"
 	"pantalla_resultado.h"
 
-1779998732 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_jugador.cpp
-	"pantalla_Jugador.h"
+1781015111 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\pantalla_explorar.h
+	<SFML/Graphics.hpp>
+	<string>
+	"botonera.h"
+	"Combate.h"
+	"pantalla_resultado.h"
+
+1781016613 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\exploracion.cpp
+	"exploracion.h"
+	"archivos.h"
 	<algorithm>
 	<iostream>
+	<random>
+	<sstream>
 
-1780599094 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.cpp
-	"personaje.h"
-	<cstring>
-
-1779994375 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\enemigos.cpp
-	<cstring>
-	<iostream>
-	"Enemigos.h"
-
-1779994375 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\enemigos.h
-	<cstddef>
-
-1780599094 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\personaje.h
-	"item.h"
-
-1780603354 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\inventario.cpp
-	<iostream>
-	"inventario.h"
-
-1780603354 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\inventario.h
-	"archivos.h"
-
-1780597651 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\item.cpp
-	<cstring>
-	"item.h"
-
-1780538693 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\item.h
-
-1780601027 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\archivos.cpp
-	"archivos.h"
-
-1780601027 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\archivos.h
-	<cstdio>
+1781013170 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\exploracion.h
 	<string>
-
-1780603354 source:d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\partidas.cpp
+	"Enemigos.h"
+	"inventario.h"
+	"item.h"
 	"partidas.h"
-	"archivos.h"
-
-1780603354 d:\utn-tecnicatura\2026\pr2\tpi\código\eryndor\partidas.h
+	"personaje.h"
 

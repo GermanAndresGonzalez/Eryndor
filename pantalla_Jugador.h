@@ -19,6 +19,10 @@ private:
     void ubicarElementos(const sf::Vector2u& windowSize);
     void actualizarHover(const sf::Vector2f& mousePos);
 
+
+    sf::Texture fondoTexture;
+    sf::Sprite  fondoSprite;
+
     sf::Font font;
     sf::Text titulo;
     sf::Text textoSalir;
@@ -33,4 +37,5 @@ private:
     bool hoverJugador1 = false;
     bool hoverJugador2 = false;
     int jugadorSeleccionado = 0;
+
 };

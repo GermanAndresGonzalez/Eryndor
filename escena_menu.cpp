@@ -1,197 +1,296 @@
 #include "escena_menu.h"
+#include "VentanaConfirmacion.h"
 
 #include <iostream>
 
 EscenaMenu::EscenaMenu()
-  : VentanaCueva("Las Profundidades de Eryndor",
-         1280,
-         720,
-         "./recursos/imag/Cueva/cueva_titulo.png",
-         "./recursos/sonido/dark-tunnel-ambience.flac")
+    : VentanaCueva("Las Profundidades de Eryndor",
+                   1280,
+                   720,
+                   "./recursos/imag/Cueva/cueva_titulo.png",
+                   "./recursos/sonido/dark-tunnel-ambience.flac")
     , menu(1280.f, 720.f)
 {}
 
 void EscenaMenu::updateLayout()
 {
-  VentanaCueva::updateLayout();
+    VentanaCueva::updateLayout();
 
-  pantallaJugador.updateLayout(window);
-  pantallaJugar.updateLayout(window);
-  pantallaOpciones.updateLayout(window);
-  pantallaAcerca.updateLayout(window);
+    pantallaJugador.updateLayout(window);
+    pantallaJugar.updateLayout(window);
+    pantallaOpciones.updateLayout(window);
+    pantallaAcerca.updateLayout(window);
 }
 
 void EscenaMenu::entrarAJuego()
 {
-  sound.setVolume(0.f);
-  pantallaActual = Pantalla::Juego;
+    sound.setVolume(0.f);
+    pantallaActual = Pantalla::Juego;
 }
 
 void EscenaMenu::cargarPartidaDesdeOpciones()
 {
-  if (pantallaJugar.cargarUltimaPartida())
-  {
-    sound.setVolume(0.f);
-    pantallaActual = Pantalla::Juego;
-  }
+    if (pantallaJugar.cargarUltimaPartida())
+    {
+        sound.setVolume(0.f);
+        pantallaActual = Pantalla::Juego;
+    }
 }
 
 void EscenaMenu::entrarASeleccionJugador()
 {
-  pantallaJugador.limpiarSeleccion();
-  sound.setVolume(0.f);
-  pantallaActual = Pantalla::Jugador;
+    pantallaJugador.limpiarSeleccion();
+    sound.setVolume(0.f);
+    pantallaActual = Pantalla::Jugador;
 }
 
 void EscenaMenu::entrarAOpciones()
 {
-  pantallaActual = Pantalla::Opciones;
+    pantallaActual = Pantalla::Opciones;
 }
 
 void EscenaMenu::entrarAAcerca()
 {
-  pantallaActual = Pantalla::Acerca;
+    pantallaActual = Pantalla::Acerca;
 }
 
 void EscenaMenu::volverAlMenu()
 {
-  sound.setVolume(100.f);
-  pantallaActual = Pantalla::Menu;
+    sound.setVolume(100.f);
+    pantallaActual = Pantalla::Menu;
 }
 
 void EscenaMenu::handleEvents()
 {
-  sf::Event event;
-  while (window.pollEvent(event))
-  {
-    if (event.type == sf::Event::Closed) {
-      window.close();
-    }
-
-    if (event.type == sf::Event::Resized) {
-      window.setView(sf::View(sf::FloatRect(
-          0.f, 0.f,
-          static_cast<float>(event.size.width),
-          static_cast<float>(event.size.height))));
-      updateLayout();
-    }
-
-    if (pantallaActual == Pantalla::Juego) {
-      const auto resultadoJuego = pantallaJugar.handleEvent(event, window);
-      if (resultadoJuego == PantallaResultado::VolverMenu) {
-        volverAlMenu();
-      } else if (resultadoJuego == PantallaResultado::VolverJugador) {
-        sound.setVolume(100.f);
-        pantallaActual = Pantalla::Jugador;
-      }
-      continue;
-    }
-
-    if (pantallaActual == Pantalla::Jugador) {
-      const auto resultadoJugador = pantallaJugador.handleEvent(event, window);
-
-      if (resultadoJugador == PantallaResultado::VolverMenu) {
-        volverAlMenu();
-        continue;
-      }
-
-      if (resultadoJugador == PantallaResultado::SeleccionHecha) {
-        jugadorSeleccionado = pantallaJugador.getJugadorSeleccionado();
-        pantallaJugar.setJugadorSeleccionado(jugadorSeleccionado);
-        entrarAJuego();
-      }
-
-      continue;
-    }
-
-    if (pantallaActual == Pantalla::Opciones) {
-      const auto resultadoOpciones = pantallaOpciones.handleEvent(event, window);
-      if (resultadoOpciones == PantallaResultado::VolverMenu) {
-        volverAlMenu();
-      } else if (resultadoOpciones == PantallaResultado::CargarPartida) {
-        cargarPartidaDesdeOpciones();
-      }
-      continue;
-    }
-
-    if (pantallaActual == Pantalla::Acerca) {
-      if (pantallaAcerca.handleEvent(event, window) == PantallaResultado::VolverMenu) {
-        volverAlMenu();
-      }
-      continue;
-    }
-
-    if (event.type == sf::Event::MouseButtonPressed &&
-        event.mouseButton.button == sf::Mouse::Left)
+    sf::Event event;
+    while (window.pollEvent(event))
     {
-      const auto mousePos = window.mapPixelToCoords(
-          {event.mouseButton.x, event.mouseButton.y});
+        if (event.type == sf::Event::Closed)
+        {
+            VentanaConfirmacion dialogo("", "Realmente deseas salir?");
+            bool respuesta = dialogo.mostrar(window);
+            if (respuesta)
+            {
+                window.close();
+            }
 
-      // Botón X de la ventana (comportamiento base)
-      if (closeButton.getGlobalBounds().contains(mousePos)) {
-        window.close();
-        return;
-      }
-
-      int clickeado = menu.obtenerClickeado(
-          static_cast<int>(mousePos.x),
-          static_cast<int>(mousePos.y));
-
-      if (clickeado >= 0) {
-        if (clickeado == 0) {
-          entrarASeleccionJugador();
-        } else if (clickeado == 1) {
-          entrarAOpciones();
-        } else if (clickeado == 2) {
-          entrarAAcerca();
-        } else {
-          opcionElegida = clickeado;
-          window.close();
+            //window.close();
         }
-      }
-    }
 
-    if (event.type == sf::Event::MouseMoved) {
-      menu.obtenerHover(event.mouseMove.x, event.mouseMove.y);
-    }
-
-    if (event.type == sf::Event::KeyPressed) {
-      if (event.key.code == sf::Keyboard::Up)    menu.moverArriba();
-      if (event.key.code == sf::Keyboard::Down)  menu.moverAbajo();
-
-      if (event.key.code == sf::Keyboard::Return && menu.haySeleccion()) {
-        if (menu.getSeleccionado() == 0) {
-          entrarASeleccionJugador();
-        } else if (menu.getSeleccionado() == 1) {
-          entrarAOpciones();
-        } else if (menu.getSeleccionado() == 2) {
-          entrarAAcerca();
-        } else {
-          opcionElegida = menu.getSeleccionado();
-          window.close();
+        if (event.type == sf::Event::Resized)
+        {
+            window.setView(sf::View(sf::FloatRect(
+                                        0.f, 0.f,
+                                        static_cast<float>(event.size.width),
+                                        static_cast<float>(event.size.height))));
+            updateLayout();
         }
-      }
+
+        if (pantallaActual == Pantalla::Juego)
+        {
+            const auto resultadoJuego = pantallaJugar.handleEvent(event, window);
+            if (resultadoJuego == PantallaResultado::VolverMenu)
+            {
+                volverAlMenu();
+            }
+            else if (resultadoJuego == PantallaResultado::VolverJugador)
+            {
+                sound.setVolume(100.f);
+                pantallaActual = Pantalla::Jugador;
+            }
+            continue;
+        }
+
+        if (pantallaActual == Pantalla::Jugador)
+        {
+            const auto resultadoJugador = pantallaJugador.handleEvent(event, window);
+
+            if (resultadoJugador == PantallaResultado::VolverMenu)
+            {
+                volverAlMenu();
+                continue;
+            }
+
+            if (resultadoJugador == PantallaResultado::SeleccionHecha)
+            {
+                jugadorSeleccionado = pantallaJugador.getJugadorSeleccionado();
+                pantallaJugar.setJugadorSeleccionado(jugadorSeleccionado);
+                entrarAJuego();
+            }
+
+            continue;
+        }
+
+        if (pantallaActual == Pantalla::Opciones)
+        {
+            const auto resultadoOpciones = pantallaOpciones.handleEvent(event, window);
+            if (resultadoOpciones == PantallaResultado::VolverMenu)
+            {
+                volverAlMenu();
+            }
+            else if (resultadoOpciones == PantallaResultado::CargarPartida)
+            {
+                cargarPartidaDesdeOpciones();
+            }
+            continue;
+        }
+
+        if (pantallaActual == Pantalla::Acerca)
+        {
+            if (pantallaAcerca.handleEvent(event, window) == PantallaResultado::VolverMenu)
+            {
+                volverAlMenu();
+            }
+            continue;
+        }
+
+        if (event.type == sf::Event::MouseButtonPressed &&
+                event.mouseButton.button == sf::Mouse::Left)
+        {
+            const auto mousePos = window.mapPixelToCoords(
+            {event.mouseButton.x, event.mouseButton.y});
+
+            // Botón X de la ventana (comportamiento base)
+            if (closeButton.getGlobalBounds().contains(mousePos))
+            {
+                VentanaConfirmacion dialogo("", "Realmente deseas salir?");
+                bool respuesta = dialogo.mostrar(window);
+                if (respuesta)
+                {
+                    window.close();
+                }
+                return;
+            }
+
+            int clickeado = menu.obtenerClickeado(
+                                static_cast<int>(mousePos.x),
+                                static_cast<int>(mousePos.y));
+
+            if (clickeado >= 0)
+            {
+                if (clickeado == 0)
+                {
+                    entrarASeleccionJugador();
+                }
+                else if (clickeado == 1)
+                {
+                    entrarAOpciones();
+                }
+                else if (clickeado == 2)
+                {
+                    entrarAAcerca();
+                }
+                else
+                {
+                    opcionElegida = clickeado;
+                    VentanaConfirmacion dialogo("", "Realmente deseas salir?");
+                    bool respuesta = dialogo.mostrar(window);
+                    if (respuesta)
+                    {
+                        window.close();
+                    }
+
+                    //window.close();
+                }
+            }
+        }
+
+        if (event.type == sf::Event::MouseMoved)
+        {
+            menu.obtenerHover(event.mouseMove.x, event.mouseMove.y);
+        }
+
+        if (event.type == sf::Event::KeyPressed)
+        {
+            if (event.key.code == sf::Keyboard::Up)    menu.moverArriba();
+            if (event.key.code == sf::Keyboard::Down)  menu.moverAbajo();
+
+            if (event.key.code == sf::Keyboard::Return && menu.haySeleccion())
+            {
+                if (menu.getSeleccionado() == 0)
+                {
+                    entrarASeleccionJugador();
+                }
+                else if (menu.getSeleccionado() == 1)
+                {
+                    entrarAOpciones();
+                }
+                else if (menu.getSeleccionado() == 2)
+                {
+                    entrarAAcerca();
+                }
+                else
+                {
+                    opcionElegida = menu.getSeleccionado();
+                    VentanaConfirmacion dialogo("", "Realmente deseas salir?");
+                    bool respuesta = dialogo.mostrar(window);
+                    if (respuesta)
+                    {
+                        window.close();
+                    }
+                    //window.close();
+                }
+            }
+        }
     }
-  }
 }
 
 void EscenaMenu::draw()
 {
-  if (pantallaActual == Pantalla::Menu) {
-    VentanaCueva::draw();
-    menu.dibujar(window);
-  } else if (pantallaActual == Pantalla::Jugador) {
-    window.clear();
-    pantallaJugador.draw(window);
-  } else if (pantallaActual == Pantalla::Juego) {
-    window.clear();
-    pantallaJugar.draw(window);
-  } else if (pantallaActual == Pantalla::Opciones) {
-    window.clear();
-    pantallaOpciones.draw(window);
-  } else if (pantallaActual == Pantalla::Acerca) {
-    window.clear();
-    pantallaAcerca.draw(window);
-  }
-  window.display();
+    if (pantallaActual == Pantalla::Menu)
+    {
+        VentanaCueva::draw();
+        menu.dibujar(window);
+    }
+    else if (pantallaActual == Pantalla::Combate)
+    {
+        pantallaCombate.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Explorar)
+    {
+        pantallaExplorar.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Jugador)
+    {
+        pantallaJugador.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Juego)
+    {
+        pantallaJugar.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Opciones)
+    {
+        pantallaOpciones.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Acerca)
+    {
+        pantallaAcerca.draw(window);
+    }
+
+    else if (pantallaActual == Pantalla::Jugador)
+    {
+        window.clear();
+        pantallaJugador.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Jugador)
+    {
+        window.clear();
+        pantallaJugador.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Juego)
+    {
+        window.clear();
+        pantallaJugar.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Opciones)
+    {
+        window.clear();
+        pantallaOpciones.draw(window);
+    }
+    else if (pantallaActual == Pantalla::Acerca)
+    {
+        window.clear();
+        pantallaAcerca.draw(window);
+    }
+    window.display();
 }

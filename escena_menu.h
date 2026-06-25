@@ -6,6 +6,8 @@
 #include "pantalla_jugar.h"
 #include "pantalla_opciones.h"
 #include "menu_principal.h"
+#include "pantalla_explorar.h"
+#include "pantalla_combate.h"
 
 /**
  * @brief Escena del menú principal: hereda de VentanaCueva y contiene un MenuPrincipal.
@@ -37,10 +39,12 @@ protected:
 private:
   enum class Pantalla {
     Menu,
+    Combate,
+    Explorar,
     Jugador,
-    Juego
-    ,Opciones
-    ,Acerca
+    Juego,
+    Opciones,
+    Acerca
   };
 
   void entrarAJuego();
@@ -55,6 +59,9 @@ private:
   PantallaJugar    pantallaJugar;
   PantallaOpciones pantallaOpciones;
   PantallaAcerca   pantallaAcerca;
+  PantallaExplorar pantallaExplorar;
+  PantallaCombate pantallaCombate;
+
   Pantalla      pantallaActual = Pantalla::Menu;
   int           opcionElegida = -1;
   int           jugadorSeleccionado = 1;
